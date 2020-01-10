@@ -1,0 +1,11 @@
+.item {
+  position: relative;
+  overflow: visible !important;
+}
+
+.actions {
+  position: absolute;
+  right: 20px;
+  top: 8px;
+  z-index: 100;
+}

@@ -12,14 +12,14 @@ export const Layout = () => {
     <>
       <h1>Petri Sidekick</h1>
       <Tabs
-        id="controlled-tab-example"
+        id="tabs"
         activeKey={activeTab}
         onSelect={(k: string) => setActiveTab(k as TAB)}
       >
         <Tab eventKey={TAB.CURRENT} title="Current">
           <List />
         </Tab>
-        <Tab eventKey={TAB.ALL} title="All">
+        <Tab eventKey={TAB.SEARCH} title="Search">
           <List />
         </Tab>
       </Tabs>

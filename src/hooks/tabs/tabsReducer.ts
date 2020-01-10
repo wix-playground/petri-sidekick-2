@@ -3,7 +3,7 @@ import {ACTION_SET_TAB} from './tabsActions'
 
 export enum TAB {
   CURRENT = 'current',
-  ALL = 'all',
+  SEARCH = 'search',
 }
 
 export interface ITabsState {

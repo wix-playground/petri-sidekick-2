@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "Wix Petri Sidekick v2",
+    "description": "Allows overriding experiments with ease"
+  },
+  "appDescription": {
+    "message": "View active experiments and override their values with ease.",
+    "description": "Allows overriding experiments with ease"
+  }
+}

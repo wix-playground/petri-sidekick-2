@@ -1,0 +1,32 @@
+{
+  "name": "__MSG_appName__",
+  "version": "2.0.0",
+  "manifest_version": 2,
+  "description": "__MSG_appDescription__",
+  "icons": {
+    "16": "assets/images/icon-16.png",
+    "128": "assets/images/icon-128.png"
+  },
+  "default_locale": "en",
+  "browser_action": {
+    "default_icon": {
+      "19": "assets/images/icon-19.png",
+      "38": "assets/images/icon-38.png"
+    },
+    "default_title": "Petri Sidekick",
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "cookies",
+    "storage",
+    "tabs",
+    "http://*.wix.com/*",
+    "http://*.wixsite.com/*",
+    "http://*.wixapps.net/*",
+    "http://*.wixpress.com/*",
+    "https://*.wix.com/*",
+    "https://*.wixsite.com/*",
+    "https://*.wixapps.net/*",
+    "https://*.wixpress.com/*"
+  ]
+}

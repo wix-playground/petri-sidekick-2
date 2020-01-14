@@ -5,6 +5,7 @@ import {useTabs} from '../../hooks/tabs/useTabs'
 import {TAB} from '../../hooks/tabs/tabsReducer'
 import {List} from '../list/list'
 import s from './layout.module.css'
+import {Search} from '../search/search'
 
 export const Layout = () => {
   const {activeTab, setActiveTab} = useTabs()
@@ -24,7 +25,7 @@ export const Layout = () => {
           <List />
         </Tab>
         <Tab eventKey={TAB.SEARCH} title="Search">
-          <List />
+          <Search />
         </Tab>
       </Tabs>
     </>

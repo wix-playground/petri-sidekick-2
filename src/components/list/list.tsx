@@ -37,8 +37,8 @@ export const List = () => {
         <Button
           variant="link"
           className={s.delete}
-          onMouseOver={onDeleteMouseOver}
-          onMouseOut={onDeleteMouseOut}
+          onMouseEnter={onDeleteMouseOver}
+          onMouseLeave={onDeleteMouseOut}
         >
           {hoveringDelete ? <TiDeleteOutline /> : <TiDelete />}
         </Button>

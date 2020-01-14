@@ -1,13 +1,55 @@
 body {
   width: 602px;
   height: 372px;
+  padding: 20px;
 }
 
 .nav-tabs .nav-item {
   color: #495057;
   opacity: 0.7;
+  transition: opacity 0.2s;
 }
 
+.nav-tabs .nav-item:hover,
 .nav-tabs .nav-item.active {
   opacity: 1;
+}
+
+h1 small {
+  font-weight: normal;
+  line-height: 1;
+  color: #999;
+  font-size: 65%;
+  padding: 0 10px;
+}
+
+h1 small:hover {
+  background-size: 1800% 1800%;
+  background-image: linear-gradient(
+    to left,
+    violet,
+    indigo,
+    blue,
+    green,
+    yellow,
+    orange,
+    red
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation: rainbow 2s ease infinite;
+  animation: rainbow 2s ease infinite;
+  cursor: default;
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
 }

@@ -1,4 +1,9 @@
 import * as React from 'react'
+import {reduceActiveExperiments} from '../hooks/activeExperiments/activeExperimentsReducer'
+import {
+  IActiveExperimentsState,
+  defaultActiveExperimentsState,
+} from '../hooks/activeExperiments/activeExperimentsReducer'
 import {
   ITabsState,
   reduceTabs,
@@ -34,6 +39,7 @@ export interface IConnectedActionCreators {
 
 export interface IAppState {
   tabs: ITabsState
+  activeExperiments: IActiveExperimentsState
 }
 
 export interface IAppStateContext {
@@ -41,7 +47,10 @@ export interface IAppStateContext {
   dispatch: React.Dispatch<IAction>
 }
 
-const defaultState: IAppState = {tabs: defaultTabsState}
+const defaultState: IAppState = {
+  tabs: defaultTabsState,
+  activeExperiments: defaultActiveExperimentsState,
+}
 
 export const AppStateContext: React.Context<IAppStateContext> = React.createContext(
   {
@@ -52,6 +61,7 @@ export const AppStateContext: React.Context<IAppStateContext> = React.createCont
 
 export const reducer = (state: IAppState, action: IAction): IAppState => ({
   tabs: reduceTabs(state.tabs, action),
+  activeExperiments: reduceActiveExperiments(state.activeExperiments, action),
 })
 
 export const AppStateProvider: React.FunctionComponent = ({children}) => {

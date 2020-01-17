@@ -2,7 +2,7 @@
   position: relative;
   overflow: visible !important;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.8;
   transition: opacity 0.2s;
 }
 
@@ -10,17 +10,13 @@
   opacity: 1;
 }
 
+.specName {
+  word-wrap: ellipsis;
+}
+
 .actions {
   position: absolute;
   right: 47px;
   top: 8px;
   z-index: 100;
-}
-
-.delete {
-  color: #c82333;
-  position: absolute;
-  right: 1px;
-  font-size: 20px;
-  top: 1px;
 }

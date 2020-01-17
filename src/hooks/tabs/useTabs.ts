@@ -4,7 +4,6 @@ import {
   connectActionCreators,
   IToConnectedActionCreator,
 } from '../../commons/appState'
-import {ITabsState, TAB} from './tabsReducer'
 import {setActiveTab} from './tabsActions'
 
 export const CURRENT_TAB = 'current'

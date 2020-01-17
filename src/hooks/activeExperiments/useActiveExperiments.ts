@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {loadActiveExperiments} from './activeExperimentsActions'
-import {IActiveExperiment} from './activeExperimentsReducer'
+import {IExperiment} from './activeExperimentsReducer'
 import {
   IToConnectedActionCreator,
   useAppState,
@@ -8,11 +8,11 @@ import {
 } from '../../commons/appState'
 
 export interface IUseActiveExperiments {
-  activeExperiments: IActiveExperiment[]
+  activeExperiments: IExperiment[]
   loadActiveExperiments: IToConnectedActionCreator<typeof loadActiveExperiments>
 }
 
-export const useTabs = () => {
+export const useActiveExperiments = () => {
   const {state, dispatch} = useAppState()
 
   const connectedActionCreators = connectActionCreators(dispatch, {

@@ -6,9 +6,17 @@ import {TAB} from '../../hooks/tabs/tabsReducer'
 import {List} from '../list/list'
 import s from './layout.module.css'
 import {Search} from '../search/search'
+import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 
 export const Layout = () => {
   const {activeTab, setActiveTab} = useTabs()
+
+  const {activeExperiments, loadActiveExperiments} = useActiveExperiments()
+
+  React.useEffect(() => {
+    loadActiveExperiments()
+    // eslint-disable-next-line
+  }, [])
 
   return (
     <>
@@ -22,7 +30,7 @@ export const Layout = () => {
         onSelect={(k: string) => setActiveTab(k as TAB)}
       >
         <Tab eventKey={TAB.CURRENT} title="Current">
-          <List />
+          <List experiments={activeExperiments} />
         </Tab>
         <Tab eventKey={TAB.SEARCH} title="Search">
           <Search />

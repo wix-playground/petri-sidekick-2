@@ -30,7 +30,15 @@ export const Layout = () => {
         onSelect={(k: string) => setActiveTab(k as TAB)}
       >
         <Tab eventKey={TAB.CURRENT} title="Current">
-          <List experiments={activeExperiments} />
+          <List
+            experiments={activeExperiments}
+            emptyText={
+              <>
+                <div>There are no experiments selected at the moment.</div>
+                <div>Please use search tab to select some.</div>
+              </>
+            }
+          />
         </Tab>
         <Tab eventKey={TAB.SEARCH} title="Search">
           <Search />

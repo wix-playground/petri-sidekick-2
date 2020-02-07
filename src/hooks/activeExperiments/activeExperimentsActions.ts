@@ -17,20 +17,19 @@ export const loadActiveExperiments = (dispatch: React.Dispatch<IAction>) => {
         payload: cookies
           .filter(cookie => EXPERIMENTS_DOMAINS.includes(cookie.domain))
           .flatMap(cookie => cookie.value.split('|'))
+          .filter(item => item.length)
           .map(item => item.split('#'))
-          .map(item => [item[0], item[1] === 'true'])
+          .map(([specName, value]) => [specName, value === 'true'])
           .filter(
             (item, index, arr) =>
               arr.findIndex(nextItem => nextItem[0] === item[0]) === index,
           )
           .map(
-            item =>
+            ([specName, state]) =>
               ({
-                specName: item[0],
-                state: item[1] ? EXPERIMENT_STATE.ON : EXPERIMENT_STATE.OFF,
-                actualState: item[1]
-                  ? EXPERIMENT_STATE.ON
-                  : EXPERIMENT_STATE.OFF,
+                specName,
+                state: state ? EXPERIMENT_STATE.ON : EXPERIMENT_STATE.OFF,
+                actualState: state ? EXPERIMENT_STATE.ON : EXPERIMENT_STATE.OFF,
               } as IExperiment),
           ),
       })

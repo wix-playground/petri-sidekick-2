@@ -6,12 +6,20 @@
   transition: opacity 0.2s;
 }
 
+.empty {
+  margin-top: 50px;
+  text-align: center;
+}
+
 .item:hover {
   opacity: 1;
 }
 
 .specName {
-  word-wrap: ellipsis;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 400px;
 }
 
 .actions {
@@ -19,4 +27,8 @@
   right: 47px;
   top: 8px;
   z-index: 100;
+}
+
+.actions button {
+  width: 60px;
 }

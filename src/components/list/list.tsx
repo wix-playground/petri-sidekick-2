@@ -3,6 +3,7 @@ import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
+import Alert from 'react-bootstrap/Alert'
 import s from './list.module.css'
 import {
   IExperiment,
@@ -12,9 +13,10 @@ import {Delete} from './delete/delete'
 
 export interface IListProps {
   experiments: IExperiment[]
+  emptyText: React.ReactNode
 }
 
-export const List = ({experiments}: IListProps) => {
+export const List = ({experiments, emptyText}: IListProps) => {
   const getDropdownVariant = (experiment: IExperiment) => {
     switch (experiment.actualState) {
       case EXPERIMENT_STATE.ON:
@@ -39,14 +41,15 @@ export const List = ({experiments}: IListProps) => {
 
   return (
     <Accordion>
+      {!experiments.length && (
+        <Alert className={s.empty} variant={'light'}>
+          {emptyText}
+        </Alert>
+      )}
       {experiments.map((experiment, index) => (
         <Card className={s.item}>
-          <Accordion.Toggle
-            className={s.specName}
-            as={Card.Header}
-            eventKey="0"
-          >
-            {experiment.specName}.asdf.as.das.d.asd.asd.as.da.sd.asd
+          <Accordion.Toggle as={Card.Header} eventKey="0">
+            <div className={s.specName}>{experiment.specName}</div>
           </Accordion.Toggle>
           <Accordion.Collapse eventKey="0">
             <Card.Body>TODO: More detailed information</Card.Body>

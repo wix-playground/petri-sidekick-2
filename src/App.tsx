@@ -8,4 +8,5 @@ const App: React.FC = () => (
     <Layout />
   </AppStateProvider>
 )
+
 export default App

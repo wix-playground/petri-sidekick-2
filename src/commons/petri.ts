@@ -1,5 +1,3 @@
-import {IExperiment} from '../hooks/activeExperiments/activeExperimentsReducer'
-
 const API_ADDRESS = 'https://bo.wix.com/_api/wix-petri-webapp'
 
 export const login = () => {
@@ -51,3 +49,79 @@ const get = (path: string) =>
       },
     )
   })
+
+export enum EXPERIMENT_STATE {
+  ON = 'on',
+  OFF = 'off',
+  AUTO = 'auto',
+}
+
+export interface IPetriExperimentData {
+  name: string
+  type: string
+  creator: string
+  scope: string
+  state: string
+  id: number
+  lastUpdated: number // timestamp
+  key: string // spec
+  specKey: boolean
+  creationDate: number // timestamp
+  description: string
+  updater: string
+  comment: string
+  startDate: number // timestamp
+  endDate: number // timestamp
+  paused: boolean
+  groups: any[]
+  editable: boolean
+  wixUsers: boolean
+  nonWixUsers: boolean
+  allRegistered: boolean
+  newRegistered: boolean
+  nonRegistered: boolean
+  anonymous: boolean
+  excludeGeo: boolean
+  geo: any[]
+  languages: any[]
+  hosts: any[]
+  excludePlatforms: any[]
+  excludeVersion: any[]
+  excludeArtifacts: any[]
+  includeGuids: any[]
+  excludeGuids: any[]
+  parentStartTime: number // timestamp
+  includeUserAgentRegexes: any[]
+  excludeUserAgentRegexes: any[]
+  excludeUserGroups: any[]
+  includeProfileAttributes: any[]
+  excludeProfileAttributes: any[]
+  includeActiveGroups: any[]
+  excludeActiveGroups: any[]
+  includeDateIntervals: any[]
+  excludeDateIntervals: any[]
+  originalId: number
+  linkId: number
+  excludeMetaSiteIds: boolean
+  metaSiteIds: any[]
+  conductLimit: number
+  forRegisteredUsers: boolean
+  allowedForBots: boolean
+  allowedForVips: boolean
+  persistent: boolean
+  includeUserBuckets: any[]
+  artifacts: any[]
+  version: any[]
+  platforms: any[]
+}
+
+export interface IExperiment {
+  specName: string
+  state?: EXPERIMENT_STATE
+  actualState?: EXPERIMENT_STATE
+  petriData?: IPetriExperimentData
+}
+
+export const EXPERIMENT_STATE_ON = 'ON'
+export const EXPERIMENT_STATE_OFF = 'OFF'
+export const EXPERIMENT_STATE_AUTO = 'AUTO'

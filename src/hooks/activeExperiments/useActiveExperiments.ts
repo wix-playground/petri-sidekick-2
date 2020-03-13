@@ -1,5 +1,5 @@
 import {loadActiveExperiments} from './activeExperimentsActions'
-import {IExperiment} from './activeExperimentsReducer'
+import {IExperiment} from '../../commons/petri'
 import {
   IToConnectedActionCreator,
   useAppState,

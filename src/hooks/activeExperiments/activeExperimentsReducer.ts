@@ -1,21 +1,6 @@
 import {IAction} from '../../commons/appState'
 import {ACTION_LOAD_ACTIVE_EXPERIMENTS} from './activeExperimentsActions'
-
-export const ACTIVE_EXPERIMENT_STATE_ON = 'ON'
-export const ACTIVE_EXPERIMENT_STATE_OFF = 'OFF'
-export const ACTIVE_EXPERIMENT_STATE_AUTO = 'AUTO'
-
-export enum EXPERIMENT_STATE {
-  ON = 'on',
-  OFF = 'off',
-  AUTO = 'auto',
-}
-
-export interface IExperiment {
-  specName: string
-  state?: EXPERIMENT_STATE
-  actualState?: EXPERIMENT_STATE
-}
+import {IExperiment, EXPERIMENT_STATE} from '../../commons/petri'
 
 export interface IActiveExperimentsState {
   list: IExperiment[]

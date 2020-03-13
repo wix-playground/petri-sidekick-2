@@ -5,11 +5,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Alert from 'react-bootstrap/Alert'
 import s from './list.module.css'
-import {
-  IExperiment,
-  EXPERIMENT_STATE,
-} from '../../hooks/activeExperiments/activeExperimentsReducer'
 import {Delete} from './delete/delete'
+import {EXPERIMENT_STATE, IExperiment} from '../../commons/petri'
 
 export interface IListProps {
   experiments: IExperiment[]

@@ -1,5 +1,5 @@
-import {IExperiment} from '../petriExperiments/petriExperimentsReducer'
 import {loadPetriExperiments} from './petriExperimentsActions'
+import {IExperiment} from '../../commons/petri'
 import {
   IToConnectedActionCreator,
   useAppState,

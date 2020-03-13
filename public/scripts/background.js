@@ -3,6 +3,8 @@ const LOGIN_URL = `https://bo.wix.com/wix-authentication-server/login/?url=${LOG
 
 const REDIRECT_CHECK_INTERVAL = 100
 
+const storage = {}
+
 chrome.runtime.onMessage.addListener((message, sender, sendReply) => {
   if (message.type) {
     if (message.type === 'LOGIN') {
@@ -52,6 +54,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendReply) => {
         })
 
       return true
+    } else if (message.type === 'SET_STORAGE') {
+      storage[message.payload.key] = message.payload.value
+      sendReply({type: 'SET_STORAGE_REPLY', payload: {status: 'ok'}})
+    } else if (message.type === 'GET_STORAGE') {
+      sendReply({
+        type: 'GET_STORAGE_REPLY',
+        payload:
+          storage[message.payload.key] !== undefined
+            ? storage[message.payload.key]
+            : 'null',
+      })
     }
   }
 })

@@ -61,6 +61,8 @@ export const Search = () => {
       <Typeahead
         placeholder="Type experiment spec name here"
         options={getSearchQueries()}
+        ignoreDiacritics={false}
+        caseSensitive
       />
     </div>
   )

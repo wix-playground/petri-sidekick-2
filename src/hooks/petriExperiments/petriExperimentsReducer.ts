@@ -1,6 +1,6 @@
 import {IAction} from '../../commons/appState'
 import {ACTION_LOAD_PETRI_EXPERIMENTS} from './petriExperimentsActions'
-import {IExperiment, IPetriExperimentData} from '../../commons/petri'
+import {IExperiment} from '../../commons/petri'
 
 export interface IPetriExperimentsState {
   list: IExperiment[]
@@ -20,12 +20,7 @@ export const reducePetriExperiments = (
     case ACTION_LOAD_PETRI_EXPERIMENTS:
       return {
         ...state,
-        list: action.payload.map(
-          (experiment: IPetriExperimentData): IExperiment => ({
-            specName: experiment.key,
-            petriData: experiment,
-          }),
-        ),
+        list: action.payload,
         loaded: true,
       }
     default:

@@ -19,14 +19,18 @@ export const loggedIn = (): Promise<boolean> =>
 
 export const getExperiments = (): Promise<IExperiment[]> =>
   new Promise(async resolve => {
-    console.log('Fetching')
     get('/v1/Experiments')
       .then(experiments => {
-        console.log({experiments})
-        resolve(experiments as any)
+        resolve(
+          (experiments as IPetriExperimentData[]).map(
+            (experiment: IPetriExperimentData): IExperiment => ({
+              specName: experiment.key,
+              petriData: experiment,
+            }),
+          ),
+        )
       })
       .catch(e => {
-        console.log(e)
         resolve([])
       })
   })

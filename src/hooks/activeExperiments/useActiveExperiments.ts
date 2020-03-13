@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {loadActiveExperiments} from './activeExperimentsActions'
 import {IExperiment} from './activeExperimentsReducer'
 import {

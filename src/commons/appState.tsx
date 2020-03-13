@@ -1,5 +1,10 @@
 import * as React from 'react'
 import {reduceActiveExperiments} from '../hooks/activeExperiments/activeExperimentsReducer'
+import {reducePetriExperiments} from '../hooks/petriExperiments/petriExperimentsReducer'
+import {
+  defaultPetriExperimentsState,
+  IPetriExperimentsState,
+} from '../hooks/petriExperiments/petriExperimentsReducer'
 import {
   IActiveExperimentsState,
   defaultActiveExperimentsState,
@@ -40,6 +45,7 @@ export interface IConnectedActionCreators {
 export interface IAppState {
   tabs: ITabsState
   activeExperiments: IActiveExperimentsState
+  petriExperiments: IPetriExperimentsState
 }
 
 export interface IAppStateContext {
@@ -50,6 +56,7 @@ export interface IAppStateContext {
 const defaultState: IAppState = {
   tabs: defaultTabsState,
   activeExperiments: defaultActiveExperimentsState,
+  petriExperiments: defaultPetriExperimentsState,
 }
 
 export const AppStateContext: React.Context<IAppStateContext> = React.createContext(
@@ -62,6 +69,7 @@ export const AppStateContext: React.Context<IAppStateContext> = React.createCont
 export const reducer = (state: IAppState, action: IAction): IAppState => ({
   tabs: reduceTabs(state.tabs, action),
   activeExperiments: reduceActiveExperiments(state.activeExperiments, action),
+  petriExperiments: reducePetriExperiments(state.petriExperiments, action),
 })
 
 export const AppStateProvider: React.FunctionComponent = ({children}) => {

@@ -5,19 +5,28 @@ import s from './search.module.css'
 import {getSearchQueries} from '../../commons/localStorage'
 import {loggedIn} from '../../commons/petri'
 import {Login} from '../login/login'
+import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
 
 export const Search = () => {
+  const {loaded, loadPetriExperiments} = usePetriExperiments()
   const [authenticated, setAuthenticated] = React.useState<boolean>(false)
   const [ready, setReady] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     const checkLogin = async () => {
-      setAuthenticated(await loggedIn())
+      const isLoggedIn = await loggedIn()
+      setAuthenticated(isLoggedIn)
       setReady(true)
+
+      if (isLoggedIn) {
+        loadPetriExperiments()
+      }
     }
 
     checkLogin()
-  })
+
+    // eslint-disable-next-line
+  }, [])
 
   if (!ready) {
     return (
@@ -32,6 +41,19 @@ export const Search = () => {
 
   if (!authenticated) {
     return <Login />
+  }
+
+  // TODO: externalize spinner into separate component
+
+  if (!loaded) {
+    return (
+      <div className={s.loader}>
+        <div className={s.spinner}>
+          <Spinner animation="border" />
+        </div>
+        <span>Loading experiments...</span>
+      </div>
+    )
   }
 
   return (

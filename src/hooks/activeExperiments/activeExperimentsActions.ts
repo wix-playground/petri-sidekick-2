@@ -6,6 +6,8 @@ export const ACTION_LOAD_ACTIVE_EXPERIMENTS = 'ACTION_LOAD_ACTIVE_EXPERIMENTS'
 const EXPERIMENTS_COOKIE_NAME = 'petri_ovr'
 const EXPERIMENTS_DOMAINS = ['.wix.com', '.wixapps.net', '.wixsite.com']
 
+// TODO: also load from local storage
+
 export const loadActiveExperiments = (dispatch: React.Dispatch<IAction>) => {
   chrome.cookies.getAll(
     {

@@ -1,3 +1,5 @@
+import {IExperiment} from '../hooks/activeExperiments/activeExperimentsReducer'
+
 const API_ADDRESS = 'https://bo.wix.com/_api/wix-petri-webapp'
 
 export const login = () => {
@@ -14,6 +16,20 @@ export const loggedIn = (): Promise<boolean> =>
       })
       .catch(e => {
         resolve(false)
+      })
+  })
+
+export const getExperiments = (): Promise<IExperiment[]> =>
+  new Promise(async resolve => {
+    console.log('Fetching')
+    get('/v1/Experiments')
+      .then(experiments => {
+        console.log({experiments})
+        resolve(experiments as any)
+      })
+      .catch(e => {
+        console.log(e)
+        resolve([])
       })
   })
 

@@ -7,32 +7,3 @@
   margin-top: 25px;
   min-width: 160px;
 }
-
-.loader {
-  text-align: center;
-  opacity: 0.7;
-}
-
-.spinner {
-  margin: auto;
-  margin-top: 50px;
-}
-
-.loader > span {
-  line-height: 2.5;
-  animation: pulsate 3s ease-out;
-  animation-iteration-count: infinite;
-  opacity: 0;
-}
-
-@keyframes pulsate {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}

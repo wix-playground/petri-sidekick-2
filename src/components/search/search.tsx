@@ -6,6 +6,7 @@ import {getSearchQueries} from '../../commons/localStorage'
 import {loggedIn} from '../../commons/petri'
 import {Login} from '../login/login'
 import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
+import {Loader} from '../loader/loader'
 
 export const Search = () => {
   const {loaded, loadPetriExperiments} = usePetriExperiments()
@@ -29,31 +30,15 @@ export const Search = () => {
   }, [])
 
   if (!ready) {
-    return (
-      <div className={s.loader}>
-        <div className={s.spinner}>
-          <Spinner animation="border" />
-        </div>
-        <span>Connecting...</span>
-      </div>
-    )
+    return <Loader text={'Connecting...'} />
   }
 
   if (!authenticated) {
     return <Login />
   }
 
-  // TODO: externalize spinner into separate component
-
   if (!loaded) {
-    return (
-      <div className={s.loader}>
-        <div className={s.spinner}>
-          <Spinner animation="border" />
-        </div>
-        <span>Loading experiments...</span>
-      </div>
-    )
+    return <Loader text={'Loading experiments...'} />
   }
 
   return (

@@ -45,10 +45,10 @@ export const List = ({experiments, emptyText}: IListProps) => {
       )}
       {experiments.map((experiment, index) => (
         <Card className={s.item}>
-          <Accordion.Toggle as={Card.Header} eventKey="0">
+          <Accordion.Toggle as={Card.Header} eventKey={experiment.specName}>
             <div className={s.specName}>{experiment.specName}</div>
           </Accordion.Toggle>
-          <Accordion.Collapse eventKey="0">
+          <Accordion.Collapse eventKey={experiment.specName}>
             <Card.Body>TODO: More detailed information</Card.Body>
           </Accordion.Collapse>
           {experiment.state && (

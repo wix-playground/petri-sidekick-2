@@ -27,8 +27,13 @@ export interface IAction {
   payload?: any
 }
 
+export interface IActionCreatorContext {
+  dispatch: React.Dispatch<IAction>
+  getState: () => IAppState
+}
+
 export type IActionCreator = (
-  dispatch: React.Dispatch<IAction>,
+  context: IActionCreatorContext,
   ...args: any[]
 ) => void
 
@@ -50,19 +55,23 @@ export interface IAppState {
 
 export interface IAppStateContext {
   state: IAppState
+  getState: () => IAppState
   dispatch: React.Dispatch<IAction>
 }
 
-const defaultState: IAppState = {
+const defaultState = {
   tabs: defaultTabsState,
   activeExperiments: defaultActiveExperimentsState,
   petriExperiments: defaultPetriExperimentsState,
 }
 
+const getDefaultState = (): IAppState => defaultState
+
 export const AppStateContext: React.Context<IAppStateContext> = React.createContext(
   {
     state: defaultState,
-    dispatch: state => state,
+    getState: getDefaultState,
+    dispatch: (state) => state,
   } as IAppStateContext,
 )
 
@@ -72,14 +81,23 @@ export const reducer = (state: IAppState, action: IAction): IAppState => ({
   petriExperiments: reducePetriExperiments(state.petriExperiments, action),
 })
 
+const stateStorage: {state: IAppState | null} = {
+  state: null,
+}
+
 export const AppStateProvider: React.FunctionComponent = ({children}) => {
   const [state, dispatch] = React.useReducer<typeof reducer>(
     reducer,
-    defaultState,
+    getDefaultState(),
   )
 
+  stateStorage.state = state
+  const getState = () => stateStorage.state
+
   return (
-    <AppStateContext.Provider value={{state, dispatch} as IAppStateContext}>
+    <AppStateContext.Provider
+      value={{state, getState, dispatch} as IAppStateContext}
+    >
       {children}
     </AppStateContext.Provider>
   )
@@ -87,6 +105,7 @@ export const AppStateProvider: React.FunctionComponent = ({children}) => {
 
 export const connectActionCreators = (
   dispatch: React.Dispatch<IAction>,
+  getState: () => IAppState,
   actionCreators: IActionCreators,
 ) => {
   const connectedActionCreators: IConnectedActionCreators = {}
@@ -94,7 +113,7 @@ export const connectActionCreators = (
   for (let name in actionCreators) {
     if (actionCreators.hasOwnProperty(name)) {
       connectedActionCreators[name] = (...args) =>
-        actionCreators[name](dispatch, ...args)
+        actionCreators[name]({dispatch, getState}, ...args)
     }
   }
 

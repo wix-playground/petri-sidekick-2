@@ -13,9 +13,9 @@ export interface IUsePetriExperiments {
 }
 
 export const usePetriExperiments = () => {
-  const {state, dispatch} = useAppState()
+  const {state, getState, dispatch} = useAppState()
 
-  const connectedActionCreators = connectActionCreators(dispatch, {
+  const connectedActionCreators = connectActionCreators(dispatch, getState, {
     loadPetriExperiments,
   })
 

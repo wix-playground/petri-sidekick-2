@@ -1,4 +1,4 @@
-import {IAction} from '../../commons/appState'
+import {IAction, IAppState} from '../../commons/appState'
 import {ACTION_LOAD_ACTIVE_EXPERIMENTS} from './activeExperimentsActions'
 import {IExperiment, EXPERIMENT_STATE} from '../../commons/petri'
 
@@ -19,10 +19,13 @@ export const reduceActiveExperiments = (
       return {
         ...state,
         list: state.list
-          .filter(item => item.state !== EXPERIMENT_STATE.AUTO)
+          .filter((item) => item.state !== EXPERIMENT_STATE.AUTO)
           .concat(action.payload),
       }
     default:
       return state
   }
 }
+
+export const getActiveExperimentAmount = (state: IAppState) =>
+  state.activeExperiments.list.length

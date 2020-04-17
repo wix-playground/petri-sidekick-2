@@ -12,9 +12,9 @@ export interface IUseActiveExperiments {
 }
 
 export const useActiveExperiments = () => {
-  const {state, dispatch} = useAppState()
+  const {state, getState, dispatch} = useAppState()
 
-  const connectedActionCreators = connectActionCreators(dispatch, {
+  const connectedActionCreators = connectActionCreators(dispatch, getState, {
     loadActiveExperiments,
   })
 

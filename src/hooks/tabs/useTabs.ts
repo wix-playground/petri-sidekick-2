@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {
   useAppState,
   connectActionCreators,
@@ -15,9 +14,9 @@ export interface IUseTabs {
 }
 
 export const useTabs = () => {
-  const {state, dispatch} = useAppState()
+  const {state, getState, dispatch} = useAppState()
 
-  const connectedActionCreators = connectActionCreators(dispatch, {
+  const connectedActionCreators = connectActionCreators(dispatch, getState, {
     setActiveTab,
   })
 

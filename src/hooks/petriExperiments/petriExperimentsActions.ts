@@ -1,4 +1,4 @@
-import {IAction} from '../../commons/appState'
+import {IActionCreator} from '../../commons/appState'
 import {getExperiments} from '../../commons/petri'
 import {setTemporaryValue} from '../../commons/localStorage'
 import {
@@ -9,9 +9,7 @@ import {
 
 export const ACTION_LOAD_PETRI_EXPERIMENTS = 'ACTION_LOAD_PETRI_EXPERIMENTS'
 
-export const loadPetriExperiments = async (
-  dispatch: React.Dispatch<IAction>,
-) => {
+export const loadPetriExperiments: IActionCreator = async ({dispatch}) => {
   const experiments = await getRuntimeValue(EXPERIMENTS_MEMORY)
 
   if (experiments) {

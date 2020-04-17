@@ -1,5 +1,6 @@
-import {IAction} from '../../commons/appState'
+import {IActionCreator} from '../../commons/appState'
 import {EXPERIMENT_STATE, IExperiment} from '../../commons/petri'
+import {getActiveExperimentAmount} from './activeExperimentsReducer'
 
 export const ACTION_LOAD_ACTIVE_EXPERIMENTS = 'ACTION_LOAD_ACTIVE_EXPERIMENTS'
 
@@ -8,23 +9,29 @@ const EXPERIMENTS_DOMAINS = ['.wix.com', '.wixapps.net', '.wixsite.com']
 
 // TODO: also load from local storage
 
-export const loadActiveExperiments = (dispatch: React.Dispatch<IAction>) => {
+export const updateBadge: IActionCreator = ({getState}) => {
+  chrome.browserAction.setBadgeText({
+    text: (getActiveExperimentAmount(getState()) || '').toString(),
+  })
+}
+
+export const loadActiveExperiments: IActionCreator = (context) => {
   chrome.cookies.getAll(
     {
       name: EXPERIMENTS_COOKIE_NAME,
     },
-    cookies => {
-      dispatch({
+    (cookies) => {
+      context.dispatch({
         type: ACTION_LOAD_ACTIVE_EXPERIMENTS,
         payload: cookies
-          .filter(cookie => EXPERIMENTS_DOMAINS.includes(cookie.domain))
-          .flatMap(cookie => cookie.value.split('|'))
-          .filter(item => item.length)
-          .map(item => item.split('#'))
+          .filter((cookie) => EXPERIMENTS_DOMAINS.includes(cookie.domain))
+          .flatMap((cookie) => cookie.value.split('|'))
+          .filter((item) => item.length)
+          .map((item) => item.split('#'))
           .map(([specName, value]) => [specName, value === 'true'])
           .filter(
             (item, index, arr) =>
-              arr.findIndex(nextItem => nextItem[0] === item[0]) === index,
+              arr.findIndex((nextItem) => nextItem[0] === item[0]) === index,
           )
           .map(
             ([specName, state]) =>
@@ -35,6 +42,8 @@ export const loadActiveExperiments = (dispatch: React.Dispatch<IAction>) => {
               } as IExperiment),
           ),
       })
+
+      updateBadge(context)
     },
   )
 }

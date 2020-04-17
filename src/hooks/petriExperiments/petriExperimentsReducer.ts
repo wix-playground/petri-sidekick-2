@@ -1,4 +1,4 @@
-import {IAction} from '../../commons/appState'
+import {IAction, IAppState} from '../../commons/appState'
 import {ACTION_LOAD_PETRI_EXPERIMENTS} from './petriExperimentsActions'
 import {IExperiment} from '../../commons/petri'
 
@@ -27,3 +27,9 @@ export const reducePetriExperiments = (
       return state
   }
 }
+
+export const getPetriExperiments = (state: IAppState) =>
+  state.petriExperiments.list
+
+export const isPetriExperimentsLoaded = (state: IAppState) =>
+  state.petriExperiments.loaded

@@ -1,4 +1,4 @@
-import {IAction} from '../../commons/appState'
+import {IAction, IAppState} from '../../commons/appState'
 import {ACTION_SET_TAB} from './tabsActions'
 
 export enum TAB {
@@ -22,3 +22,5 @@ export const reduceTabs = (state: ITabsState, action: IAction): ITabsState => {
       return state
   }
 }
+
+export const getActiveTab = (state: IAppState) => state.tabs.activeTab

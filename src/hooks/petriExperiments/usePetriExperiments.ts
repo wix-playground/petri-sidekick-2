@@ -1,6 +1,10 @@
 import {loadPetriExperiments} from './petriExperimentsActions'
 import {IExperiment} from '../../commons/petri'
 import {
+  getPetriExperiments,
+  isPetriExperimentsLoaded,
+} from './petriExperimentsReducer'
+import {
   IToConnectedActionCreator,
   useAppState,
   connectActionCreators,
@@ -20,8 +24,8 @@ export const usePetriExperiments = () => {
   })
 
   return {
-    petriExperiments: state.petriExperiments.list,
-    loaded: state.petriExperiments.loaded,
+    petriExperiments: getPetriExperiments(state),
+    loaded: isPetriExperimentsLoaded(state),
     ...connectedActionCreators,
   } as IUsePetriExperiments
 }

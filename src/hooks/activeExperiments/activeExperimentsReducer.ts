@@ -1,5 +1,8 @@
 import {IAction, IAppState} from '../../commons/appState'
-import {ACTION_LOAD_ACTIVE_EXPERIMENTS} from './activeExperimentsActions'
+import {
+  ACTION_LOAD_ACTIVE_EXPERIMENTS,
+  ACTION_COMPLETE_ACTIVE_EXPERIMENTS,
+} from './activeExperimentsActions'
 import {IExperiment, EXPERIMENT_STATE} from '../../commons/petri'
 
 export interface IActiveExperimentsState {
@@ -18,14 +21,27 @@ export const reduceActiveExperiments = (
     case ACTION_LOAD_ACTIVE_EXPERIMENTS:
       return {
         ...state,
-        list: state.list
-          .filter((item) => item.state !== EXPERIMENT_STATE.AUTO)
-          .concat(action.payload),
+        list: action.payload,
+      }
+    case ACTION_COMPLETE_ACTIVE_EXPERIMENTS:
+      const list = state.list.map(item => ({
+        ...item,
+        ...(action.payload.find(
+          (petriItem: IExperiment) => petriItem.specName === item.specName,
+        ) || {}),
+      }))
+
+      return {
+        ...state,
+        list,
       }
     default:
       return state
   }
 }
 
+export const getActiveExperiments = (state: IAppState) =>
+  state.activeExperiments.list
+
 export const getActiveExperimentAmount = (state: IAppState) =>
-  state.activeExperiments.list.length
+  getActiveExperiments(state).length

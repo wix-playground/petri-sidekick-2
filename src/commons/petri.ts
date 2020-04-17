@@ -1,4 +1,13 @@
+import {filterUnique, filterEmpty} from './arrays'
 const API_ADDRESS = 'https://bo.wix.com/_api/wix-petri-webapp'
+
+export enum EPetriExperimentState {
+  ACTIVE = 'active',
+  ENDED = 'ended',
+  PAUSED = 'paused',
+  FUTURE = 'future',
+  UNKNOWN = 'unknown',
+}
 
 export const login = () => {
   chrome.runtime.sendMessage({
@@ -21,19 +30,61 @@ export const getExperiments = (): Promise<IExperiment[]> =>
   new Promise(async resolve => {
     get('/v1/Experiments')
       .then(experiments => {
-        resolve(
-          (experiments as IPetriExperimentData[]).map(
-            (experiment: IPetriExperimentData): IExperiment => ({
-              specName: experiment.key,
-              petriData: experiment,
-            }),
-          ),
-        )
+        resolve(mapExperiments(experiments as IPetriExperimentData[]))
       })
       .catch(e => {
         resolve([])
       })
   })
+
+const mapExperiments = (
+  petriExperiments: IPetriExperimentData[],
+): IExperiment[] => {
+  const map: {[spec: string]: IExperiment} = {}
+
+  const statePriorities = [
+    EPetriExperimentState.ACTIVE,
+    EPetriExperimentState.FUTURE,
+    EPetriExperimentState.PAUSED,
+    EPetriExperimentState.ENDED,
+    EPetriExperimentState.UNKNOWN,
+  ].reverse()
+
+  petriExperiments.forEach(petriExperiment => {
+    const experiment = map[petriExperiment.key] || {}
+    const petriData = (experiment.petriData || {}) as IPetriAggregatedData
+    const scopes = petriData.scopes || []
+    const state = petriData.state || EPetriExperimentState.UNKNOWN
+    const pointsOfContact = petriData.pointsOfContact || []
+
+    map[petriExperiment.key] = {
+      ...experiment,
+      specName: petriExperiment.key,
+      petriData: {
+        ...petriData,
+        scopes: filterUnique([...scopes, petriExperiment.scope]),
+        state:
+          statePriorities.indexOf(state) <
+          statePriorities.indexOf(
+            petriExperiment.state as EPetriExperimentState,
+          )
+            ? (petriExperiment.state as EPetriExperimentState)
+            : state,
+        pointsOfContact: filterEmpty(
+          filterUnique([
+            ...pointsOfContact,
+            petriExperiment.creator,
+            petriExperiment.updater,
+          ]),
+        ),
+      },
+    }
+  })
+
+  const experiments: IExperiment[] = Object.values(map)
+
+  return experiments
+}
 
 const get = (path: string) =>
   new Promise((resolve, reject) => {
@@ -65,7 +116,7 @@ export interface IPetriExperimentData {
   type: string
   creator: string
   scope: string
-  state: string
+  state: EPetriExperimentState
   id: number
   lastUpdated: number // timestamp
   key: string // spec
@@ -119,11 +170,17 @@ export interface IPetriExperimentData {
   platforms: any[]
 }
 
+export interface IPetriAggregatedData {
+  scopes: string[]
+  state: EPetriExperimentState
+  pointsOfContact: string[]
+}
+
 export interface IExperiment {
   specName: string
   state?: EXPERIMENT_STATE
   actualState?: EXPERIMENT_STATE
-  petriData?: IPetriExperimentData
+  petriData?: IPetriAggregatedData
 }
 
 export const EXPERIMENT_STATE_ON = 'ON'

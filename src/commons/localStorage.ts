@@ -1,5 +1,7 @@
 import {IExperiment} from './petri'
+
 export const EXPERIMENTS_MEMORY = 'experiments'
+export const ACTIVE_EXPERIMENTS_MEMORY = 'active-experiments'
 
 const SEARCH_MEMORY = 'SEARCH_MEMORY'
 const SEARCH_MEMORY_SIZE = 20

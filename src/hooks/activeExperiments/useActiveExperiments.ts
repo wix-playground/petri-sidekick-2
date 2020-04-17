@@ -1,5 +1,6 @@
 import {loadActiveExperiments} from './activeExperimentsActions'
 import {IExperiment} from '../../commons/petri'
+import {getActiveExperiments} from './activeExperimentsReducer'
 import {
   IToConnectedActionCreator,
   useAppState,
@@ -19,7 +20,7 @@ export const useActiveExperiments = () => {
   })
 
   return {
-    activeExperiments: state.activeExperiments.list,
+    activeExperiments: getActiveExperiments(state),
     ...connectedActionCreators,
   } as IUseActiveExperiments
 }

@@ -37,7 +37,7 @@ export const List = ({experiments, emptyText}: IListProps) => {
   }
 
   return (
-    <Accordion>
+    <Accordion className={s.list}>
       {!experiments.length && (
         <Alert className={s.empty} variant={'light'}>
           {emptyText}

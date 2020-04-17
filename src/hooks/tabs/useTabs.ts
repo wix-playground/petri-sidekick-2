@@ -4,6 +4,7 @@ import {
   IToConnectedActionCreator,
 } from '../../commons/appState'
 import {setActiveTab} from './tabsActions'
+import {getActiveTab} from './tabsReducer'
 
 export const CURRENT_TAB = 'current'
 export const ALL_TAB = 'all'
@@ -21,7 +22,7 @@ export const useTabs = () => {
   })
 
   return {
-    activeTab: state.tabs.activeTab,
+    activeTab: getActiveTab(state),
     ...connectedActionCreators,
   } as IUseTabs
 }

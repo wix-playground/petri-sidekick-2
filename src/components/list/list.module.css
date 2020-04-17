@@ -36,3 +36,12 @@
 .actions button {
   width: 60px;
 }
+
+.experimentCard {
+  padding: 1px;
+  cursor: default;
+}
+
+.pointsOfContact {
+  padding-top: 10px;
+}

@@ -41,5 +41,4 @@ export const loadPetriExperiments: IActionCreator = async context => {
   completeActiveExperiments(context)
 }
 
-// TODO: attempt implementing experiment conducting
 // TODO: Implement trackPetriExperiments for periodical updates

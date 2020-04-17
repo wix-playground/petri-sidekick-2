@@ -3,7 +3,7 @@ import {
   ACTION_LOAD_ACTIVE_EXPERIMENTS,
   ACTION_COMPLETE_ACTIVE_EXPERIMENTS,
 } from './activeExperimentsActions'
-import {IExperiment, EXPERIMENT_STATE} from '../../commons/petri'
+import {IExperiment} from '../../commons/petri'
 
 export interface IActiveExperimentsState {
   list: IExperiment[]

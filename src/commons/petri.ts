@@ -1,6 +1,11 @@
 import {filterUnique, filterEmpty} from './arrays'
 const API_ADDRESS = 'https://bo.wix.com/_api/wix-petri-webapp'
 
+export enum EPetriExperimentType {
+  FEATURE_TOGGLE = 'featureToggle',
+  AB_TEST = 'abTest',
+}
+
 export enum EPetriExperimentState {
   ACTIVE = 'active',
   ENDED = 'ended',
@@ -56,6 +61,20 @@ const mapExperiments = (
     const scopes = petriData.scopes || []
     const state = petriData.state || EPetriExperimentState.UNKNOWN
     const pointsOfContact = petriData.pointsOfContact || []
+
+    // FIXME: experiments may have different groups!
+
+    // groups: Array(2)
+    // 0: {value: "0", chunk: 100, id: 1}
+    // 1: {value: "1", chunk: 0, id: 2}
+
+    // groups: Array(2)
+    // 0: {value: "false", chunk: 100, id: 1}
+    // 1: {value: "true", chunk: 0, id: 2}
+
+    // if (petriExperiment.key === 'specs.events.ui.EventsPaidPlans') {
+    //   console.log(petriExperiment)
+    // }
 
     map[petriExperiment.key] = {
       ...experiment,
@@ -113,7 +132,7 @@ export enum EXPERIMENT_STATE {
 
 export interface IPetriExperimentData {
   name: string
-  type: string
+  type: EPetriExperimentType
   creator: string
   scope: string
   state: EPetriExperimentState
@@ -178,6 +197,7 @@ export interface IPetriAggregatedData {
 
 export interface IExperiment {
   specName: string
+  type: EPetriExperimentType
   state?: EXPERIMENT_STATE
   actualState?: EXPERIMENT_STATE
   petriData?: IPetriAggregatedData

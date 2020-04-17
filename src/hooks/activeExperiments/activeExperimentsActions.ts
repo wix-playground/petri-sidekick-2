@@ -55,7 +55,10 @@ export const loadActiveExperiments: IActionCreator = context => {
             .flatMap(cookie => cookie.value.split('|'))
             .filter(item => item.length)
             .map(item => item.split('#'))
-            .map(([specName, value]) => [specName, value === 'true'])
+            .map(([specName, value]) => [
+              specName,
+              ['true', '1'].includes(value), // FIXME: it is possible to have ANY value
+            ])
             .filter(
               (item, index, arr) =>
                 arr.findIndex(nextItem => nextItem[0] === item[0]) === index,

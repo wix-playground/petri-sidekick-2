@@ -61,20 +61,7 @@ const mapExperiments = (
     const scopes = petriData.scopes || []
     const state = petriData.state || EPetriExperimentState.UNKNOWN
     const pointsOfContact = petriData.pointsOfContact || []
-
-    // FIXME: experiments may have different groups!
-
-    // groups: Array(2)
-    // 0: {value: "0", chunk: 100, id: 1}
-    // 1: {value: "1", chunk: 0, id: 2}
-
-    // groups: Array(2)
-    // 0: {value: "false", chunk: 100, id: 1}
-    // 1: {value: "true", chunk: 0, id: 2}
-
-    // if (petriExperiment.key === 'specs.events.ui.EventsPaidPlans') {
-    //   console.log(petriExperiment)
-    // }
+    const options = petriData.options || []
 
     map[petriExperiment.key] = {
       ...experiment,
@@ -96,6 +83,10 @@ const mapExperiments = (
             petriExperiment.updater,
           ]),
         ),
+        options: filterUnique([
+          ...options,
+          ...petriExperiment.groups.map(group => group.value),
+        ]),
       },
     }
   })
@@ -128,6 +119,7 @@ export enum EXPERIMENT_STATE {
   ON = 'on',
   OFF = 'off',
   AUTO = 'auto',
+  CUSTOM = 'custom',
 }
 
 export interface IPetriExperimentData {
@@ -193,6 +185,7 @@ export interface IPetriAggregatedData {
   scopes: string[]
   state: EPetriExperimentState
   pointsOfContact: string[]
+  options: string[]
 }
 
 export interface IExperiment {
@@ -200,6 +193,7 @@ export interface IExperiment {
   type: EPetriExperimentType
   state?: EXPERIMENT_STATE
   actualState?: EXPERIMENT_STATE
+  customState?: string
   petriData?: IPetriAggregatedData
 }
 

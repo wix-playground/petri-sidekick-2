@@ -26,6 +26,8 @@ export const List = ({experiments, emptyText}: IListProps) => {
         return 'success'
       case EXPERIMENT_STATE.OFF:
         return 'danger'
+      case EXPERIMENT_STATE.CUSTOM:
+        return 'warning'
       default:
         return 'primary'
     }
@@ -37,6 +39,8 @@ export const List = ({experiments, emptyText}: IListProps) => {
         return 'On'
       case EXPERIMENT_STATE.OFF:
         return 'Off'
+      case EXPERIMENT_STATE.CUSTOM:
+        return 'Custom'
       default:
         return 'Auto'
     }
@@ -130,12 +134,18 @@ export const List = ({experiments, emptyText}: IListProps) => {
                 {experiment.state !== EXPERIMENT_STATE.AUTO && (
                   <Dropdown.Item eventKey="auto">Reset</Dropdown.Item>
                 )}
-                {experiment.state !== EXPERIMENT_STATE.ON && (
-                  <Dropdown.Item eventKey="on">Enable</Dropdown.Item>
-                )}
-                {experiment.state !== EXPERIMENT_STATE.OFF && (
-                  <Dropdown.Item eventKey="off">Disable</Dropdown.Item>
-                )}
+                {experiment.state !== EXPERIMENT_STATE.CUSTOM &&
+                  !Object.is(experiment.customState, undefined) && (
+                    <Dropdown.Item eventKey="auto">Custom</Dropdown.Item>
+                  )}
+                {experiment.state !== EXPERIMENT_STATE.ON &&
+                  Object.is(experiment.customState, undefined) && (
+                    <Dropdown.Item eventKey="on">Enable</Dropdown.Item>
+                  )}
+                {experiment.state !== EXPERIMENT_STATE.OFF &&
+                  Object.is(experiment.customState, undefined) && (
+                    <Dropdown.Item eventKey="off">Disable</Dropdown.Item>
+                  )}
               </DropdownButton>
               <Delete />
             </>

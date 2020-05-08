@@ -55,23 +55,20 @@ export const loadActiveExperiments: IActionCreator = context => {
             .flatMap(cookie => cookie.value.split('|'))
             .filter(item => item.length)
             .map(item => item.split('#'))
-            .map(([specName, value]) => [
-              specName,
-              ['true', '1'].includes(value), // FIXME: it is possible to have ANY value
-            ])
             .filter(
               (item, index, arr) =>
                 arr.findIndex(nextItem => nextItem[0] === item[0]) === index,
             )
-            .map(
-              ([specName, state]) =>
-                ({
+            .map(([specName, state]) =>
+              getExperimentWithState(
+                {
                   specName,
-                  state: state ? EXPERIMENT_STATE.ON : EXPERIMENT_STATE.OFF,
-                  actualState: state
-                    ? EXPERIMENT_STATE.ON
-                    : EXPERIMENT_STATE.OFF,
-                } as IExperiment),
+                  state: EXPERIMENT_STATE.CUSTOM,
+                  actualState: EXPERIMENT_STATE.CUSTOM,
+                  customState: state,
+                } as IExperiment,
+                storedExperiments,
+              ),
             )
             .concat(storedExperiments),
           'specName',
@@ -82,4 +79,36 @@ export const loadActiveExperiments: IActionCreator = context => {
       completeActiveExperiments(context)
     },
   )
+}
+
+const getExperimentWithState = (
+  newExperiment: IExperiment,
+  storedExperiments: IExperiment[],
+): IExperiment => {
+  const storedExperiment = storedExperiments.find(
+    experiment => experiment.specName === newExperiment.specName,
+  )
+  const isBinary =
+    storedExperiment && Object.is(storedExperiment.customState, undefined)
+
+  if (!isBinary) {
+    return newExperiment
+  }
+
+  const customState = newExperiment.customState as string
+
+  console.log(newExperiment)
+
+  newExperiment.state =
+    customState.toLowerCase() === 'true'
+      ? EXPERIMENT_STATE.ON
+      : EXPERIMENT_STATE.OFF
+  newExperiment.actualState =
+    customState.toLowerCase() === 'true'
+      ? EXPERIMENT_STATE.ON
+      : EXPERIMENT_STATE.OFF
+
+  delete newExperiment.customState
+
+  return newExperiment
 }

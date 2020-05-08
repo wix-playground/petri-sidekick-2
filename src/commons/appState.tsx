@@ -2,6 +2,11 @@ import * as React from 'react'
 import {reduceActiveExperiments} from '../hooks/activeExperiments/activeExperimentsReducer'
 import {reducePetriExperiments} from '../hooks/petriExperiments/petriExperimentsReducer'
 import {
+  defaultLoginState,
+  reduceLogin,
+  ILoginState,
+} from '../hooks/login/loginReducer'
+import {
   defaultPetriExperimentsState,
   IPetriExperimentsState,
 } from '../hooks/petriExperiments/petriExperimentsReducer'
@@ -51,6 +56,7 @@ export interface IAppState {
   tabs: ITabsState
   activeExperiments: IActiveExperimentsState
   petriExperiments: IPetriExperimentsState
+  login: ILoginState
 }
 
 export interface IAppStateContext {
@@ -63,6 +69,7 @@ const defaultState = {
   tabs: defaultTabsState,
   activeExperiments: defaultActiveExperimentsState,
   petriExperiments: defaultPetriExperimentsState,
+  login: defaultLoginState,
 }
 
 const getDefaultState = (): IAppState => defaultState
@@ -71,7 +78,7 @@ export const AppStateContext: React.Context<IAppStateContext> = React.createCont
   {
     state: defaultState,
     getState: getDefaultState,
-    dispatch: (state) => state,
+    dispatch: state => state,
   } as IAppStateContext,
 )
 
@@ -79,6 +86,7 @@ export const reducer = (state: IAppState, action: IAction): IAppState => ({
   tabs: reduceTabs(state.tabs, action),
   activeExperiments: reduceActiveExperiments(state.activeExperiments, action),
   petriExperiments: reducePetriExperiments(state.petriExperiments, action),
+  login: reduceLogin(state.login, action),
 })
 
 const stateStorage: {state: IAppState | null} = {

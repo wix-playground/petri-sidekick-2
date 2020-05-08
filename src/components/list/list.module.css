@@ -45,3 +45,16 @@
 .pointsOfContact {
   padding-top: 10px;
 }
+
+.emptyItem {
+  padding-top: 30px;
+  text-align: center;
+}
+
+.loading {
+  margin-bottom: 30px;
+}
+
+.login {
+  margin-bottom: 30px;
+}

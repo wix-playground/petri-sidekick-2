@@ -1,4 +1,4 @@
-import {loadPetriExperiments} from './petriExperimentsActions'
+import {loadPetriExperimentsIfNeeded} from './petriExperimentsActions'
 import {IExperiment} from '../../commons/petri'
 import {
   getPetriExperiments,
@@ -13,14 +13,16 @@ import {
 export interface IUsePetriExperiments {
   petriExperiments: IExperiment[]
   loaded: boolean
-  loadPetriExperiments: IToConnectedActionCreator<typeof loadPetriExperiments>
+  loadPetriExperimentsIfNeeded: IToConnectedActionCreator<
+    typeof loadPetriExperimentsIfNeeded
+  >
 }
 
 export const usePetriExperiments = () => {
   const {state, getState, dispatch} = useAppState()
 
   const connectedActionCreators = connectActionCreators(dispatch, getState, {
-    loadPetriExperiments,
+    loadPetriExperimentsIfNeeded,
   })
 
   return {

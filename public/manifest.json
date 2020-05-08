@@ -25,6 +25,7 @@
     "cookies",
     "storage",
     "tabs",
+    "unlimitedStorage",
     "http://*.wix.com/*",
     "http://*.wixsite.com/*",
     "http://*.wixapps.net/*",

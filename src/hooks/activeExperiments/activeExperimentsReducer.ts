@@ -24,8 +24,6 @@ export const reduceActiveExperiments = (
         list: action.payload,
       }
     case ACTION_COMPLETE_ACTIVE_EXPERIMENTS:
-      console.log('ACTION_COMPLETE_ACTIVE_EXPERIMENTS')
-
       const list = state.list
         .map(item => ({
           ...item,

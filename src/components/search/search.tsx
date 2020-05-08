@@ -1,33 +1,22 @@
 import * as React from 'react'
 import {Typeahead} from 'react-bootstrap-typeahead'
-import Spinner from 'react-bootstrap/Spinner'
 import s from './search.module.css'
 import {getSearchQueries} from '../../commons/localStorage'
-import {loggedIn} from '../../commons/petri'
 import {Login} from '../login/login'
 import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
 import {Loader} from '../loader/loader'
+import {useLogin} from '../../hooks/login/useLogin'
 
 export const Search = () => {
-  const {loaded, loadPetriExperiments} = usePetriExperiments()
-  const [authenticated, setAuthenticated] = React.useState<boolean>(false)
-  const [ready, setReady] = React.useState<boolean>(false)
+  const {loaded, loadPetriExperimentsIfNeeded} = usePetriExperiments()
+  const {authenticated, ready} = useLogin()
 
   React.useEffect(() => {
-    const checkLogin = async () => {
-      const isLoggedIn = await loggedIn()
-      setAuthenticated(isLoggedIn)
-      setReady(true)
-
-      if (isLoggedIn) {
-        loadPetriExperiments()
-      }
+    if (authenticated) {
+      loadPetriExperimentsIfNeeded()
     }
-
-    checkLogin()
-
     // eslint-disable-next-line
-  }, [])
+  }, [authenticated])
 
   if (!ready) {
     return <Loader text={'Connecting...'} />

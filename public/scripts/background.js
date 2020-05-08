@@ -5,6 +5,8 @@ const REDIRECT_CHECK_INTERVAL = 100
 
 const storage = {}
 
+const pendingGetRequests = {}
+
 chrome.runtime.onMessage.addListener((message, sender, sendReply) => {
   if (message.type) {
     if (message.type === 'LOGIN') {
@@ -20,38 +22,42 @@ chrome.runtime.onMessage.addListener((message, sender, sendReply) => {
         }, REDIRECT_CHECK_INTERVAL)
       })
     } else if (message.type === 'GET') {
-      fetch(message.payload.url, {cache: 'no-cache'})
-        .then(response => {
-          if (response.status !== 200) {
+      if (pendingGetRequests[message.payload.url]) {
+        pendingGetRequests[message.payload.url].then(reply => {
+          sendReply(reply)
+        })
+      } else {
+        pendingGetRequests[message.payload.url] = new Promise(resolve => {
+          const respond = response => {
             sendReply({
+              ...response,
               type: 'GET_REPLY',
-              error: true,
             })
+
+            resolve(response)
+            delete pendingGetRequests[message.payload.url]
           }
 
-          response
-            .json()
-            .then(payload => {
-              sendReply({
-                type: 'GET_REPLY',
-                payload,
-              })
+          fetch(message.payload.url, {cache: 'no-cache'})
+            .then(response => {
+              if (response.status !== 200) {
+                respond({error: true})
+              } else {
+                response
+                  .json()
+                  .then(payload => {
+                    respond({payload})
+                  })
+                  .catch(e => {
+                    respond({error: true, payload: e})
+                  })
+              }
             })
             .catch(e => {
-              sendReply({
-                type: 'GET_REPLY',
-                error: true,
-                payload: e,
-              })
+              respond({error: true, payload: e})
             })
         })
-        .catch(e => {
-          sendReply({
-            type: 'GET_REPLY',
-            error: true,
-            payload: e,
-          })
-        })
+      }
 
       return true
     } else if (message.type === 'SET_STORAGE') {

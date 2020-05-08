@@ -97,8 +97,6 @@ const getExperimentWithState = (
 
   const customState = newExperiment.customState as string
 
-  console.log(newExperiment)
-
   newExperiment.state =
     customState.toLowerCase() === 'true'
       ? EXPERIMENT_STATE.ON

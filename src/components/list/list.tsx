@@ -13,6 +13,9 @@ import {
   EPetriExperimentState,
 } from '../../commons/petri'
 import classNames from 'classnames'
+import {useLogin} from '../../hooks/login/useLogin'
+import {Loader} from '../loader/loader'
+import {Login} from '../login/login'
 
 export interface IListProps {
   experiments: IExperiment[]
@@ -20,6 +23,8 @@ export interface IListProps {
 }
 
 export const List = ({experiments, emptyText}: IListProps) => {
+  const {authenticated, ready} = useLogin()
+
   const getDropdownVariant = (experiment: IExperiment) => {
     switch (experiment.actualState) {
       case EXPERIMENT_STATE.ON:
@@ -60,7 +65,7 @@ export const List = ({experiments, emptyText}: IListProps) => {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey={experiment.specName}>
             <Card.Body className={s.experimentCard}>
-              {experiment.petriData && (
+              {experiment.petriData ? (
                 <Card border="light">
                   <Card.Body>
                     <Card.Title>{experiment.specName}</Card.Title>
@@ -118,6 +123,18 @@ export const List = ({experiments, emptyText}: IListProps) => {
                     </Card.Text>
                   </Card.Body>
                 </Card>
+              ) : !ready ? (
+                <div className={s.loading}>
+                  <Loader text={'Connecting...'} />
+                </div>
+              ) : authenticated ? (
+                <Alert className={s.emptyItem} variant={'light'}>
+                  <div>More details are not loaded</div>
+                </Alert>
+              ) : (
+                <div className={s.login}>
+                  <Login />
+                </div>
               )}
             </Card.Body>
           </Accordion.Collapse>

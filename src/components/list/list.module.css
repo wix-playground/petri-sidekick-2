@@ -58,3 +58,8 @@
 .login {
   margin-bottom: 30px;
 }
+
+.refresh {
+  margin-top: 25px;
+  min-width: 160px;
+}

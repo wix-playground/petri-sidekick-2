@@ -1,5 +1,8 @@
 import {IAction, IAppState} from '../../commons/appState'
-import {ACTION_LOAD_PETRI_EXPERIMENTS} from './petriExperimentsActions'
+import {
+  ACTION_LOAD_PETRI_EXPERIMENTS,
+  ACTION_CLEAN_PETRI_EXPERIMENTS,
+} from './petriExperimentsActions'
 import {IExperiment} from '../../commons/petri'
 
 export interface IPetriExperimentsState {
@@ -22,6 +25,12 @@ export const reducePetriExperiments = (
         ...state,
         list: action.payload,
         loaded: true,
+      }
+    case ACTION_CLEAN_PETRI_EXPERIMENTS:
+      return {
+        ...state,
+        list: [],
+        loaded: false,
       }
     default:
       return state

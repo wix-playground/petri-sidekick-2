@@ -9,6 +9,25 @@ import {
 } from '../../commons/localStorage'
 
 export const ACTION_LOAD_PETRI_EXPERIMENTS = 'ACTION_LOAD_PETRI_EXPERIMENTS'
+export const ACTION_CLEAN_PETRI_EXPERIMENTS = 'ACTION_CLEAN_PETRI_EXPERIMENTS'
+
+export const forceLoadPetriExperiments: IActionCreator = async context => {
+  const {dispatch} = context
+  const loadedExperiments = await getExperiments()
+
+  if (loadedExperiments.length) {
+    setRuntimeValue(EXPERIMENTS_MEMORY, loadedExperiments)
+    setTemporaryValue(EXPERIMENTS_MEMORY, loadedExperiments)
+    setValue(EXPERIMENTS_MEMORY, loadedExperiments)
+  }
+
+  dispatch({
+    type: ACTION_LOAD_PETRI_EXPERIMENTS,
+    payload: loadedExperiments,
+  })
+
+  completeActiveExperiments(context)
+}
 
 export const loadPetriExperiments: IActionCreator = async context => {
   const {dispatch} = context
@@ -26,20 +45,7 @@ export const loadPetriExperiments: IActionCreator = async context => {
     completeActiveExperiments(context)
   }
 
-  const loadedExperiments = await getExperiments()
-
-  if (loadedExperiments.length) {
-    setRuntimeValue(EXPERIMENTS_MEMORY, loadedExperiments)
-    setTemporaryValue(EXPERIMENTS_MEMORY, loadedExperiments)
-    setValue(EXPERIMENTS_MEMORY, loadedExperiments)
-  }
-
-  dispatch({
-    type: ACTION_LOAD_PETRI_EXPERIMENTS,
-    payload: loadedExperiments,
-  })
-
-  completeActiveExperiments(context)
+  forceLoadPetriExperiments(context)
 }
 
 export const loadPetriExperimentsIfNeeded: IActionCreator = async context => {
@@ -59,6 +65,12 @@ export const loadPetriExperimentsIfNeeded: IActionCreator = async context => {
   }
 
   loadPetriExperiments(context)
+}
+
+export const reloadPetriExperiments: IActionCreator = context => {
+  const {dispatch} = context
+  dispatch({type: ACTION_CLEAN_PETRI_EXPERIMENTS})
+  forceLoadPetriExperiments(context)
 }
 
 const getCachedExperiments = async () =>

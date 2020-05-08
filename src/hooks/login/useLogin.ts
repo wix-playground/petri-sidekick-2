@@ -4,6 +4,11 @@ import {
   IToConnectedActionCreator,
 } from '../../commons/appState'
 import {checkCredentials, performLogin} from './loginActions'
+import {
+  isCredentialsChecked,
+  isLoginInProgress,
+  isUserAuthenticated,
+} from './loginReducer'
 
 export interface IUseLogin {
   authenticated: boolean
@@ -28,9 +33,9 @@ export const useLogin = () => {
   }
 
   return {
-    authenticated: state.login.authenticated,
-    ready: state.login.ready,
-    inProgress: state.login.inProgress,
+    authenticated: isUserAuthenticated(state),
+    ready: isCredentialsChecked(state),
+    inProgress: isLoginInProgress(state),
     login: connectedActionCreators.login,
   } as IUseLogin
 }

@@ -1,4 +1,4 @@
-import {IAction} from '../../commons/appState'
+import {IAction, IAppState} from '../../commons/appState'
 import {ACTION_LOGIN, ACTION_CHECK_CREDENTIALS} from './loginActions'
 
 export interface ILoginState {
@@ -33,3 +33,10 @@ export const reduceLogin = (
       return state
   }
 }
+
+export const isUserAuthenticated = (state: IAppState) =>
+  state.login.authenticated
+
+export const isCredentialsChecked = (state: IAppState) => state.login.ready
+
+export const isLoginInProgress = (state: IAppState) => state.login.inProgress

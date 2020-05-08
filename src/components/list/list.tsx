@@ -16,6 +16,8 @@ import classNames from 'classnames'
 import {useLogin} from '../../hooks/login/useLogin'
 import {Loader} from '../loader/loader'
 import {Login} from '../login/login'
+import Button from 'react-bootstrap/Button'
+import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
 
 export interface IListProps {
   experiments: IExperiment[]
@@ -24,6 +26,7 @@ export interface IListProps {
 
 export const List = ({experiments, emptyText}: IListProps) => {
   const {authenticated, ready} = useLogin()
+  const {reloadPetriExperiments, loaded} = usePetriExperiments()
 
   const getDropdownVariant = (experiment: IExperiment) => {
     switch (experiment.actualState) {
@@ -128,9 +131,22 @@ export const List = ({experiments, emptyText}: IListProps) => {
                   <Loader text={'Connecting...'} />
                 </div>
               ) : authenticated ? (
-                <Alert className={s.emptyItem} variant={'light'}>
-                  <div>More details are not loaded</div>
-                </Alert>
+                !loaded ? (
+                  <div className={s.loading}>
+                    <Loader text={'Loading experiments...'} />
+                  </div>
+                ) : (
+                  <Alert className={s.emptyItem} variant={'light'}>
+                    <div>More detailed information is not loaded</div>
+                    <Button
+                      variant="primary"
+                      className={s.refresh}
+                      onClick={reloadPetriExperiments}
+                    >
+                      Update
+                    </Button>
+                  </Alert>
+                )
               ) : (
                 <div className={s.login}>
                   <Login />

@@ -4,8 +4,11 @@ const LOGIN_URL = `https://bo.wix.com/wix-authentication-server/login/?url=${LOG
 const REDIRECT_CHECK_INTERVAL = 100
 
 const storage = {}
-
 const pendingGetRequests = {}
+
+const CACHED_URL_PREFIX = 'cached-url-'
+
+const cachedUrls = ['https://bo.wix.com/_api/wix-petri-webapp/v1/Experiments']
 
 chrome.runtime.onMessage.addListener((message, sender, sendReply) => {
   if (message.type) {
@@ -27,36 +30,71 @@ chrome.runtime.onMessage.addListener((message, sender, sendReply) => {
           sendReply(reply)
         })
       } else {
-        pendingGetRequests[message.payload.url] = new Promise(resolve => {
-          const respond = response => {
-            sendReply({
-              ...response,
-              type: 'GET_REPLY',
-            })
+        chrome.storage.local.get(
+          [CACHED_URL_PREFIX + message.payload.url],
+          ({cachedPayload}) => {
+            if (cachedPayload) {
+              sendReply({payload: JSON.parse(cachedPayload)})
+              chrome.storage.local.remove([
+                CACHED_URL_PREFIX + message.payload.url,
+              ])
+            } else {
+              pendingGetRequests[message.payload.url] = new Promise(resolve => {
+                const respond = response => {
+                  sendReply({
+                    ...response,
+                    type: 'GET_REPLY',
+                  })
 
-            resolve(response)
-            delete pendingGetRequests[message.payload.url]
-          }
+                  resolve(response)
+                  delete pendingGetRequests[message.payload.url]
+                }
 
-          fetch(message.payload.url, {cache: 'no-cache'})
-            .then(response => {
-              if (response.status !== 200) {
-                respond({error: true})
-              } else {
-                response
-                  .json()
-                  .then(payload => {
-                    respond({payload})
+                fetch(message.payload.url, {cache: 'no-cache'})
+                  .then(response => {
+                    if (response.status !== 200) {
+                      respond({error: true})
+                    } else {
+                      response
+                        .json()
+                        .then(payload => {
+                          if (cachedUrls.includes(message.payload.url)) {
+                            console.log('Saving...')
+                            chrome.storage.local.set(
+                              {
+                                test: JSON.stringify(payload),
+                              },
+                              (...args) => {
+                                console.log('Saved')
+                                console.log({args})
+                              },
+                            )
+                            chrome.storage.local.set(
+                              {
+                                [CACHED_URL_PREFIX +
+                                message.payload.url]: JSON.stringify(payload),
+                              },
+                              (...args) => {
+                                console.log('Saved')
+                                console.log({args})
+                              },
+                            )
+                          }
+
+                          respond({payload})
+                        })
+                        .catch(e => {
+                          respond({error: true, payload: e})
+                        })
+                    }
                   })
                   .catch(e => {
                     respond({error: true, payload: e})
                   })
-              }
-            })
-            .catch(e => {
-              respond({error: true, payload: e})
-            })
-        })
+              })
+            }
+          },
+        )
       }
 
       return true

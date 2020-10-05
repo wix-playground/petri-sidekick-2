@@ -65,10 +65,8 @@ const fixBinaryExperiment = (experiment: IExperiment): IExperiment => {
 
   if (customState.toLowerCase() === 'true') {
     experiment.state = EXPERIMENT_STATE.ON
-    experiment.actualState = EXPERIMENT_STATE.ON
   } else {
     experiment.state = EXPERIMENT_STATE.OFF
-    experiment.actualState = EXPERIMENT_STATE.OFF
   }
 
   delete experiment.customState

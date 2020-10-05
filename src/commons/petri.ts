@@ -56,8 +56,6 @@ export const getExperiments = async (): Promise<IExperiment[]> => {
     if (newAmount > lastAmount) {
       await new Promise(resolve => setTimeout(resolve, GET_EXPERIMENTS_TIMEOUT))
     }
-
-    console.log(newAmount)
   } while (newAmount > lastAmount)
 
   return Object.values(map)
@@ -210,7 +208,6 @@ export interface IExperiment {
   specName: string
   type: EPetriExperimentType
   state?: EXPERIMENT_STATE
-  actualState?: EXPERIMENT_STATE
   customState?: string
   petriData?: IPetriAggregatedData
 }

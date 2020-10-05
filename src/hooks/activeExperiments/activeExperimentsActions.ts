@@ -64,7 +64,6 @@ export const loadActiveExperiments: IActionCreator = context => {
                 {
                   specName,
                   state: EXPERIMENT_STATE.CUSTOM,
-                  actualState: EXPERIMENT_STATE.CUSTOM,
                   customState: state,
                 } as IExperiment,
                 storedExperiments,
@@ -98,10 +97,6 @@ const getExperimentWithState = (
   const customState = newExperiment.customState as string
 
   newExperiment.state =
-    customState.toLowerCase() === 'true'
-      ? EXPERIMENT_STATE.ON
-      : EXPERIMENT_STATE.OFF
-  newExperiment.actualState =
     customState.toLowerCase() === 'true'
       ? EXPERIMENT_STATE.ON
       : EXPERIMENT_STATE.OFF

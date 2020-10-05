@@ -29,7 +29,7 @@ export const List = ({experiments, emptyText}: IListProps) => {
   const {reloadPetriExperiments, loaded} = usePetriExperiments()
 
   const getDropdownVariant = (experiment: IExperiment) => {
-    switch (experiment.actualState) {
+    switch (experiment.state) {
       case EXPERIMENT_STATE.ON:
         return 'success'
       case EXPERIMENT_STATE.OFF:

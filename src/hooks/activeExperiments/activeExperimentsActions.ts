@@ -22,7 +22,18 @@ export const ACTION_LOAD_ACTIVE_EXPERIMENTS = 'ACTION_LOAD_ACTIVE_EXPERIMENTS'
 export const ACTION_SET_EXPERIMENT_AUTO = 'ACTION_SET_EXPERIMENT_AUTO'
 
 const EXPERIMENTS_COOKIE_NAME = 'petri_ovr'
-const EXPERIMENTS_DOMAINS = ['.wix.com', '.wixapps.net', '.wixsite.com']
+const EXPERIMENTS_DOMAINS = [
+  '.wix.com',
+  '.wixapps.net',
+  '.wixsite.com',
+  '.editorx.com',
+  '.editorx.io',
+  '.wix-code.com',
+  '.wixpress.com',
+  '.wixanswers.com',
+  '.wixrestaurants.com',
+  '.wixhotels.com',
+]
 
 export const forgetExperiment: IActionCreator = async (
   context,
@@ -38,6 +49,51 @@ export const forgetExperiment: IActionCreator = async (
   setValue(ACTIVE_EXPERIMENTS_MEMORY, filteredExperiments)
 
   await setExperimentAuto(context, specName)
+}
+
+export const turnBinaryExperimentOn: IActionCreator = (
+  context,
+  specName: string,
+) => setExperimentValue(context, specName, 'true')
+
+export const turnBinaryExperimentOff: IActionCreator = (
+  context,
+  specName: string,
+) => setExperimentValue(context, specName, 'false')
+
+export const setExperimentValue: IActionCreator = async (
+  context,
+  specName: string,
+  value: string,
+) => {
+  const experimentsFromCookies = await getExperimentsFromCookies()
+
+  let changedExistentExperiment = false
+
+  const updatedExperiments = experimentsFromCookies.map(
+    ([experimentSpecName, originalValue]) => {
+      if (experimentSpecName === specName) {
+        changedExistentExperiment = true
+        return [experimentSpecName, value]
+      } else {
+        return [experimentSpecName, originalValue]
+      }
+    },
+  )
+
+  if (!changedExistentExperiment) {
+    updatedExperiments.push([specName, value])
+  }
+
+  const newCookieValue = updatedExperiments
+    .map(item => item.join('#'))
+    .join('|')
+
+  for (let domain of EXPERIMENTS_DOMAINS) {
+    await setCookie(EXPERIMENTS_COOKIE_NAME, newCookieValue, domain)
+  }
+
+  loadActiveExperiments(context)
 }
 
 export const setExperimentAuto: IActionCreator = async (

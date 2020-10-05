@@ -26,13 +26,6 @@
     "storage",
     "tabs",
     "unlimitedStorage",
-    "http://*.wix.com/*",
-    "http://*.wixsite.com/*",
-    "http://*.wixapps.net/*",
-    "http://*.wixpress.com/*",
-    "https://*.wix.com/*",
-    "https://*.wixsite.com/*",
-    "https://*.wixapps.net/*",
-    "https://*.wixpress.com/*"
+    "<all_urls>"
   ]
 }

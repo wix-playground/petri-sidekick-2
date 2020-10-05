@@ -1,19 +1,16 @@
 import * as React from 'react'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
 import Alert from 'react-bootstrap/Alert'
 import s from './list.module.css'
-import {Delete} from './delete/delete'
-import {EXPERIMENT_STATE, IExperiment} from '../../commons/petri'
+import {IExperiment} from '../../commons/petri'
 import {useLogin} from '../../hooks/login/useLogin'
 import {Loader} from '../loader/loader'
 import {Login} from '../login/login'
 import Button from 'react-bootstrap/Button'
 import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
 import {Experiment} from '../experiment/experiment'
-import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
+import {ListActions} from './actions/list-actions'
 
 export interface IListProps {
   experiments: IExperiment[]
@@ -23,33 +20,6 @@ export interface IListProps {
 export const List: React.FC<IListProps> = ({experiments, emptyText}) => {
   const {authenticated, ready} = useLogin()
   const {reloadPetriExperiments, loaded} = usePetriExperiments()
-  const {setExperimentAuto} = useActiveExperiments()
-
-  const getDropdownVariant = (experiment: IExperiment) => {
-    switch (experiment.state) {
-      case EXPERIMENT_STATE.ON:
-        return 'success'
-      case EXPERIMENT_STATE.OFF:
-        return 'danger'
-      case EXPERIMENT_STATE.CUSTOM:
-        return 'warning'
-      default:
-        return 'primary'
-    }
-  }
-
-  const getDropdownValue = (experiment: IExperiment) => {
-    switch (experiment.state) {
-      case EXPERIMENT_STATE.ON:
-        return 'On'
-      case EXPERIMENT_STATE.OFF:
-        return 'Off'
-      case EXPERIMENT_STATE.CUSTOM:
-        return 'Custom'
-      default:
-        return 'Auto'
-    }
-  }
 
   return (
     <Accordion className={s.list}>
@@ -95,40 +65,7 @@ export const List: React.FC<IListProps> = ({experiments, emptyText}) => {
               )}
             </Card.Body>
           </Accordion.Collapse>
-          {experiment.state && (
-            <>
-              <DropdownButton
-                id={`experiment_${index}`}
-                size="sm"
-                drop="left"
-                className={s.actions}
-                title={getDropdownValue(experiment)}
-                variant={getDropdownVariant(experiment)}
-              >
-                {experiment.state !== EXPERIMENT_STATE.AUTO && (
-                  <Dropdown.Item
-                    eventKey="auto"
-                    onClick={() => setExperimentAuto(experiment.specName)}
-                  >
-                    Reset
-                  </Dropdown.Item>
-                )}
-                {experiment.state !== EXPERIMENT_STATE.CUSTOM &&
-                  !Object.is(experiment.customState, undefined) && (
-                    <Dropdown.Item eventKey="auto">Custom</Dropdown.Item>
-                  )}
-                {experiment.state !== EXPERIMENT_STATE.ON &&
-                  Object.is(experiment.customState, undefined) && (
-                    <Dropdown.Item eventKey="on">Enable</Dropdown.Item>
-                  )}
-                {experiment.state !== EXPERIMENT_STATE.OFF &&
-                  Object.is(experiment.customState, undefined) && (
-                    <Dropdown.Item eventKey="off">Disable</Dropdown.Item>
-                  )}
-              </DropdownButton>
-              <Delete specName={experiment.specName} />
-            </>
-          )}
+          {experiment.state && <ListActions experiment={experiment} />}
         </Card>
       ))}
     </Accordion>

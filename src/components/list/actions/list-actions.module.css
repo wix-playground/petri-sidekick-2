@@ -1,0 +1,10 @@
+.actions {
+  position: absolute;
+  right: 47px;
+  top: 8px;
+  z-index: 100;
+}
+
+.actions button {
+  width: 80px;
+}

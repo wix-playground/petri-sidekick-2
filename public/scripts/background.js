@@ -6,109 +6,90 @@ const REDIRECT_CHECK_INTERVAL = 100
 const storage = {}
 const pendingGetRequests = {}
 
-const CACHED_URL_PREFIX = 'cached-url-'
+// eslint-disable-next-line
+const chromeApi = chrome
 
-const cachedUrls = ['https://bo.wix.com/_api/wix-petri-webapp/v1/Experiments']
-
-chrome.runtime.onMessage.addListener((message, sender, sendReply) => {
-  if (message.type) {
-    if (message.type === 'LOGIN') {
-      chrome.tabs.create({url: LOGIN_URL, active: false}, tab => {
-        const closeCheckInterval = setInterval(() => {
-          chrome.tabs.get(tab.id, loginTab => {
-            if (loginTab.url?.startsWith(LOGIN_REDIRECT_URL)) {
-              clearInterval(closeCheckInterval)
-              chrome.tabs.remove(loginTab.id)
-              sendReply({type: 'LOGIN_REPLY', payload: {status: 'ok'}})
-            }
-          })
-        }, REDIRECT_CHECK_INTERVAL)
+const handleLogin = (message, sendReply) => {
+  chromeApi.tabs.create({url: LOGIN_URL, active: false}, tab => {
+    const closeCheckInterval = setInterval(() => {
+      chromeApi.tabs.get(tab.id, loginTab => {
+        if (loginTab.url?.startsWith(LOGIN_REDIRECT_URL)) {
+          clearInterval(closeCheckInterval)
+          chromeApi.tabs.remove(loginTab.id)
+          sendReply({type: 'LOGIN_REPLY', payload: {status: 'ok'}})
+        }
       })
-    } else if (message.type === 'GET') {
-      if (pendingGetRequests[message.payload.url]) {
-        pendingGetRequests[message.payload.url].then(reply => {
-          sendReply(reply)
+    }, REDIRECT_CHECK_INTERVAL)
+  })
+}
+
+const handleGet = (message, sendReply) => {
+  if (pendingGetRequests[message.payload.url]) {
+    pendingGetRequests[message.payload.url].then(reply => {
+      sendReply(reply)
+    })
+  } else {
+    pendingGetRequests[message.payload.url] = new Promise(resolve => {
+      const respond = response => {
+        sendReply({
+          ...response,
+          type: 'GET_REPLY',
         })
-      } else {
-        chrome.storage.local.get(
-          [CACHED_URL_PREFIX + message.payload.url],
-          ({cachedPayload}) => {
-            if (cachedPayload) {
-              sendReply({payload: JSON.parse(cachedPayload)})
-              chrome.storage.local.remove([
-                CACHED_URL_PREFIX + message.payload.url,
-              ])
-            } else {
-              pendingGetRequests[message.payload.url] = new Promise(resolve => {
-                const respond = response => {
-                  sendReply({
-                    ...response,
-                    type: 'GET_REPLY',
-                  })
 
-                  resolve(response)
-                  delete pendingGetRequests[message.payload.url]
-                }
-
-                fetch(message.payload.url, {cache: 'no-cache'})
-                  .then(response => {
-                    if (response.status !== 200) {
-                      respond({error: true})
-                    } else {
-                      response
-                        .json()
-                        .then(payload => {
-                          if (cachedUrls.includes(message.payload.url)) {
-                            console.log('Saving...')
-                            chrome.storage.local.set(
-                              {
-                                test: JSON.stringify(payload),
-                              },
-                              (...args) => {
-                                console.log('Saved')
-                                console.log({args})
-                              },
-                            )
-                            chrome.storage.local.set(
-                              {
-                                [CACHED_URL_PREFIX +
-                                message.payload.url]: JSON.stringify(payload),
-                              },
-                              (...args) => {
-                                console.log('Saved')
-                                console.log({args})
-                              },
-                            )
-                          }
-
-                          respond({payload})
-                        })
-                        .catch(e => {
-                          respond({error: true, payload: e})
-                        })
-                    }
-                  })
-                  .catch(e => {
-                    respond({error: true, payload: e})
-                  })
-              })
-            }
-          },
-        )
+        resolve(response)
+        delete pendingGetRequests[message.payload.url]
       }
 
+      fetch(message.payload.url, {cache: 'no-cache'})
+        .then(response => {
+          if (response.status !== 200) {
+            respond({error: true})
+          } else {
+            response
+              .json()
+              .then(payload => {
+                respond({payload})
+              })
+              .catch(e => {
+                respond({error: true, payload: e})
+              })
+          }
+        })
+        .catch(e => {
+          respond({error: true, payload: e})
+        })
+    })
+  }
+}
+
+const handleSetStorage = (message, sendReply) => {
+  storage[message.payload.key] = message.payload.value
+  sendReply({type: 'SET_STORAGE_REPLY', payload: {status: 'ok'}})
+}
+
+const handleGetStorage = (message, sendReply) => {
+  sendReply({
+    type: 'GET_STORAGE_REPLY',
+    payload:
+      storage[message.payload.key] !== undefined
+        ? storage[message.payload.key]
+        : 'null',
+  })
+}
+
+chromeApi.runtime.onMessage.addListener((message, sender, sendReply) => {
+  const handlerMap = {
+    LOGIN: {handler: handleLogin},
+    GET: {handler: handleGet, async: true},
+    SET_STORAGE: {handler: handleSetStorage},
+    GET_STORAGE: {handler: handleGetStorage},
+  }
+
+  if (message.type && handlerMap[message.type]) {
+    handlerMap[message.type].handler(message, sendReply)
+
+    if (handlerMap[message.type].async) {
       return true
-    } else if (message.type === 'SET_STORAGE') {
-      storage[message.payload.key] = message.payload.value
-      sendReply({type: 'SET_STORAGE_REPLY', payload: {status: 'ok'}})
-    } else if (message.type === 'GET_STORAGE') {
-      sendReply({
-        type: 'GET_STORAGE_REPLY',
-        payload:
-          storage[message.payload.key] !== undefined
-            ? storage[message.payload.key]
-            : 'null',
-      })
     }
   }
 })

@@ -31,22 +31,42 @@ export const loggedIn = (): Promise<boolean> =>
       })
   })
 
-export const getExperiments = (): Promise<IExperiment[]> =>
-  new Promise(async resolve => {
-    get('/v1/Experiments')
-      .then(experiments => {
-        resolve(mapExperiments(experiments as IPetriExperimentData[]))
-      })
-      .catch(e => {
-        resolve([])
-      })
-  })
+export const getExperiments = async (): Promise<IExperiment[]> => {
+  const GET_EXPERIMENTS_LIMIT = 1000
+  const GET_EXPERIMENTS_TIMEOUT = 100
+
+  let offset = 0
+  let lastAmount = 0
+  let newAmount = 0
+  let map: IExperimentMap = {}
+
+  do {
+    lastAmount = newAmount
+    try {
+      const data = await get(
+        `/v1/ExperimentSearch?query=&limit=${GET_EXPERIMENTS_LIMIT}&offset=${offset}`,
+      )
+      offset += GET_EXPERIMENTS_LIMIT
+      map = mapExperiments(map, data as IPetriExperimentData[])
+      newAmount = Object.keys(map).length
+    } catch (e) {
+      return []
+    }
+
+    if (newAmount > lastAmount) {
+      await new Promise(resolve => setTimeout(resolve, GET_EXPERIMENTS_TIMEOUT))
+    }
+
+    console.log(newAmount)
+  } while (newAmount > lastAmount)
+
+  return Object.values(map)
+}
 
 const mapExperiments = (
+  map: {[spec: string]: IExperiment},
   petriExperiments: IPetriExperimentData[],
-): IExperiment[] => {
-  const map: {[spec: string]: IExperiment} = {}
-
+): IExperimentMap => {
   const statePriorities = [
     EPetriExperimentState.ACTIVE,
     EPetriExperimentState.FUTURE,
@@ -68,7 +88,7 @@ const mapExperiments = (
       specName: petriExperiment.key,
       petriData: {
         ...petriData,
-        scopes: filterUnique([...scopes, petriExperiment.scope]),
+        scopes: filterUnique([...scopes, ...petriExperiment.scope.split(',')]),
         state:
           statePriorities.indexOf(state) <
           statePriorities.indexOf(
@@ -91,9 +111,7 @@ const mapExperiments = (
     }
   })
 
-  const experiments: IExperiment[] = Object.values(map)
-
-  return experiments
+  return map
 }
 
 const get = (path: string) =>
@@ -196,6 +214,8 @@ export interface IExperiment {
   customState?: string
   petriData?: IPetriAggregatedData
 }
+
+export type IExperimentMap = {[spec: string]: IExperiment}
 
 export const EXPERIMENT_STATE_ON = 'ON'
 export const EXPERIMENT_STATE_OFF = 'OFF'

@@ -31,7 +31,7 @@ const getDropdownValue = (experiment: IExperiment) => {
     case EXPERIMENT_STATE.OFF:
       return 'Off'
     case EXPERIMENT_STATE.CUSTOM:
-      return 'Custom'
+      return experiment.customState as string
     default:
       return 'Auto'
   }
@@ -45,15 +45,22 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
   } = useActiveExperiments()
 
   const isBinary = isBinaryExperiment(experiment)
+  const title = getDropdownValue(experiment)
 
   return (
-    <>
+    <div
+      title={
+        experiment.state === EXPERIMENT_STATE.CUSTOM && title.length > 3
+          ? title
+          : undefined
+      }
+    >
       <DropdownButton
         id={`experiment_${experiment.specName}`}
         size="sm"
         drop="left"
         className={s.actions}
-        title={getDropdownValue(experiment)}
+        title={title}
         variant={getDropdownVariant(experiment)}
       >
         {experiment.state !== EXPERIMENT_STATE.AUTO && (
@@ -64,9 +71,7 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
             Reset
           </Dropdown.Item>
         )}
-        {experiment.state !== EXPERIMENT_STATE.CUSTOM && !isBinary && (
-          <Dropdown.Item eventKey="auto">Custom</Dropdown.Item>
-        )}
+        {!isBinary && <Dropdown.Item eventKey="auto">Override</Dropdown.Item>}
         {experiment.state !== EXPERIMENT_STATE.ON && isBinary && (
           <Dropdown.Item
             eventKey="on"
@@ -85,6 +90,6 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
         )}
       </DropdownButton>
       <Delete specName={experiment.specName} />
-    </>
+    </div>
   )
 }

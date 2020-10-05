@@ -3,8 +3,11 @@
   right: 47px;
   top: 8px;
   z-index: 100;
+  text-overflow: ellipsis;
 }
 
 .actions button {
   width: 80px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

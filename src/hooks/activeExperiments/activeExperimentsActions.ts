@@ -16,6 +16,7 @@ import {
 import {getPetriExperiments} from '../petriExperiments/petriExperimentsReducer'
 import {filterUniqueByKey} from '../../commons/arrays'
 import {setCookie} from '../../commons/cookies'
+import {isBinaryExperiment} from '../../commons/experiment'
 
 export const ACTION_COMPLETE_ACTIVE_EXPERIMENTS = 'ACTION_COMPL_ACT_EXPERIMENTS'
 export const ACTION_LOAD_ACTIVE_EXPERIMENTS = 'ACTION_LOAD_ACTIVE_EXPERIMENTS'
@@ -219,11 +220,9 @@ const getExperimentWithState = (
   const storedExperiment = storedExperiments.find(
     experiment => experiment.specName === newExperiment.specName,
   )
-  const isBinary =
-    storedExperiment && Object.is(storedExperiment.customState, undefined)
+  const isBinary = storedExperiment && isBinaryExperiment(storedExperiment)
 
   if (!isBinary) {
-    console.log('So far this experiment is treated as not binary')
     return newExperiment
   }
 

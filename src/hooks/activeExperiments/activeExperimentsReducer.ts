@@ -4,6 +4,7 @@ import {
   ACTION_COMPLETE_ACTIVE_EXPERIMENTS,
 } from './activeExperimentsActions'
 import {IExperiment, EXPERIMENT_STATE} from '../../commons/petri'
+import {isBinaryExperiment} from '../../commons/experiment'
 
 export interface IActiveExperimentsState {
   list: IExperiment[]
@@ -74,23 +75,4 @@ const fixBinaryExperiment = (experiment: IExperiment): IExperiment => {
 
   delete experiment.customState
   return experiment
-}
-
-const isBinaryExperiment = (experiment: IExperiment) => {
-  const options = experiment.petriData?.options ?? []
-
-  if (options.length !== 2) {
-    return false
-  }
-
-  const lowerCaseOptions = options.map(option => option.toLowerCase())
-  const requiredValues = ['true', 'false']
-
-  for (let requiredValue of requiredValues) {
-    if (!lowerCaseOptions.includes(requiredValue)) {
-      return false
-    }
-  }
-
-  return true
 }

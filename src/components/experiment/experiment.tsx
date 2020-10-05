@@ -4,6 +4,7 @@ import {
   IExperiment,
   IPetriAggregatedData,
   EPetriExperimentState,
+  EXPERIMENT_STATE,
 } from '../../commons/petri'
 import Badge from 'react-bootstrap/Badge'
 import s from './experiment.module.css'
@@ -18,6 +19,9 @@ export const Experiment: React.FC<IExperimentProps> = ({experiment}) => {
   return (
     <Card border="light">
       <Card.Body>
+        {experiment.state === EXPERIMENT_STATE.CUSTOM && (
+          <div>DROP DOWN HERE!</div>
+        )}
         <Card.Title>{experiment.specName}</Card.Title>
         <Card.Subtitle className={'mb-2 text-muted'}>
           {petriData.scopes.join(', ')}

@@ -5,6 +5,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import {useActiveExperiments} from '../../../hooks/activeExperiments/useActiveExperiments'
 import {Delete} from '../delete/delete'
 import s from './list-actions.module.css'
+import {isBinaryExperiment} from '../../../commons/experiment'
 
 export interface IListActionsProps {
   experiment: IExperiment
@@ -43,6 +44,8 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
     turnBinaryExperimentOn,
   } = useActiveExperiments()
 
+  const isBinary = isBinaryExperiment(experiment)
+
   return (
     <>
       <DropdownButton
@@ -61,28 +64,25 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
             Reset
           </Dropdown.Item>
         )}
-        {experiment.state !== EXPERIMENT_STATE.CUSTOM &&
-          !Object.is(experiment.customState, undefined) && (
-            <Dropdown.Item eventKey="auto">Custom</Dropdown.Item>
-          )}
-        {experiment.state !== EXPERIMENT_STATE.ON &&
-          Object.is(experiment.customState, undefined) && (
-            <Dropdown.Item
-              eventKey="on"
-              onClick={() => turnBinaryExperimentOn(experiment.specName)}
-            >
-              Enable
-            </Dropdown.Item>
-          )}
-        {experiment.state !== EXPERIMENT_STATE.OFF &&
-          Object.is(experiment.customState, undefined) && (
-            <Dropdown.Item
-              eventKey="off"
-              onClick={() => turnBinaryExperimentOff(experiment.specName)}
-            >
-              Disable
-            </Dropdown.Item>
-          )}
+        {experiment.state !== EXPERIMENT_STATE.CUSTOM && !isBinary && (
+          <Dropdown.Item eventKey="auto">Custom</Dropdown.Item>
+        )}
+        {experiment.state !== EXPERIMENT_STATE.ON && isBinary && (
+          <Dropdown.Item
+            eventKey="on"
+            onClick={() => turnBinaryExperimentOn(experiment.specName)}
+          >
+            Enable
+          </Dropdown.Item>
+        )}
+        {experiment.state !== EXPERIMENT_STATE.OFF && isBinary && (
+          <Dropdown.Item
+            eventKey="off"
+            onClick={() => turnBinaryExperimentOff(experiment.specName)}
+          >
+            Disable
+          </Dropdown.Item>
+        )}
       </DropdownButton>
       <Delete specName={experiment.specName} />
     </>

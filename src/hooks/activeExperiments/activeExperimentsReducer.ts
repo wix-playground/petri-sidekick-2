@@ -21,7 +21,10 @@ export const reduceActiveExperiments = (
     case ACTION_LOAD_ACTIVE_EXPERIMENTS:
       return {
         ...state,
-        list: action.payload,
+        list: action.payload.sort(
+          ({specName: a}: IExperiment, {specName: b}: IExperiment) =>
+            a === b ? 0 : a < b ? -1 : 1,
+        ),
       }
     case ACTION_COMPLETE_ACTIVE_EXPERIMENTS:
       const list = state.list

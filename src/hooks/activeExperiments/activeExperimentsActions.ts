@@ -1,5 +1,9 @@
 import {IActionCreator} from '../../commons/appState'
-import {EXPERIMENT_STATE, IExperiment} from '../../commons/petri'
+import {
+  EXPERIMENT_STATE,
+  IExperiment,
+  IExperimentCookieData,
+} from '../../commons/petri'
 import {
   getActiveExperimentAmount,
   getActiveExperiments,
@@ -11,12 +15,51 @@ import {
 } from '../../commons/localStorage'
 import {getPetriExperiments} from '../petriExperiments/petriExperimentsReducer'
 import {filterUniqueByKey} from '../../commons/arrays'
+import {setCookie} from '../../commons/cookies'
 
 export const ACTION_COMPLETE_ACTIVE_EXPERIMENTS = 'ACTION_COMPL_ACT_EXPERIMENTS'
 export const ACTION_LOAD_ACTIVE_EXPERIMENTS = 'ACTION_LOAD_ACTIVE_EXPERIMENTS'
+export const ACTION_SET_EXPERIMENT_AUTO = 'ACTION_SET_EXPERIMENT_AUTO'
 
 const EXPERIMENTS_COOKIE_NAME = 'petri_ovr'
 const EXPERIMENTS_DOMAINS = ['.wix.com', '.wixapps.net', '.wixsite.com']
+
+export const forgetExperiment: IActionCreator = async (
+  context,
+  specName: string,
+) => {
+  const storedExperiments: IExperiment[] =
+    getValue(ACTIVE_EXPERIMENTS_MEMORY) || []
+
+  const filteredExperiments = storedExperiments.filter(
+    experiment => experiment.specName !== specName,
+  )
+
+  setValue(ACTIVE_EXPERIMENTS_MEMORY, filteredExperiments)
+
+  await setExperimentAuto(context, specName)
+}
+
+export const setExperimentAuto: IActionCreator = async (
+  context,
+  specName: string,
+) => {
+  const experimentsFromCookies = await getExperimentsFromCookies()
+
+  const filteredExperiments = experimentsFromCookies.filter(
+    ([experimentSpecName]) => experimentSpecName !== specName,
+  )
+
+  const newCookieValue = filteredExperiments
+    .map(item => item.join('#'))
+    .join('|')
+
+  for (let domain of EXPERIMENTS_DOMAINS) {
+    await setCookie(EXPERIMENTS_COOKIE_NAME, newCookieValue, domain)
+  }
+
+  loadActiveExperiments(context)
+}
 
 export const updateBadge: IActionCreator = ({getState}) => {
   chrome.browserAction.setBadgeText({
@@ -54,8 +97,6 @@ export const loadActiveExperiments: IActionCreator = async context => {
     'specName',
   )
 
-  console.log({factualExperiments, updatedStoredExperiments, activeExperiments})
-
   dispatch({
     type: ACTION_LOAD_ACTIVE_EXPERIMENTS,
     payload: activeExperiments,
@@ -65,9 +106,7 @@ export const loadActiveExperiments: IActionCreator = async context => {
   completeActiveExperiments(context)
 }
 
-const getFactualExperiments = (
-  storedExperiments: IExperiment[],
-): Promise<IExperiment[]> =>
+const getExperimentsFromCookies = (): Promise<IExperimentCookieData> =>
   new Promise(resolve => {
     chrome.cookies.getAll(
       {
@@ -83,21 +122,25 @@ const getFactualExperiments = (
             .filter(
               (item, index, arr) =>
                 arr.findIndex(nextItem => nextItem[0] === item[0]) === index,
-            )
-            .map(([specName, state]) =>
-              getExperimentWithState(
-                {
-                  specName,
-                  state: EXPERIMENT_STATE.CUSTOM,
-                  customState: state,
-                } as IExperiment,
-                storedExperiments,
-              ),
-            ),
+            ) as IExperimentCookieData,
         )
       },
     )
   })
+
+const getFactualExperiments = async (
+  storedExperiments: IExperiment[],
+): Promise<IExperiment[]> =>
+  (await getExperimentsFromCookies()).map(([specName, state]) =>
+    getExperimentWithState(
+      {
+        specName,
+        state: EXPERIMENT_STATE.CUSTOM,
+        customState: state,
+      } as IExperiment,
+      storedExperiments,
+    ),
+  )
 
 const getUpdatedStoredExperiments = (
   storedExperiments: IExperiment[],

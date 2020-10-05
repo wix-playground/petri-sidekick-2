@@ -1,32 +1,29 @@
 import * as React from 'react'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
-import Badge from 'react-bootstrap/Badge'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Alert from 'react-bootstrap/Alert'
 import s from './list.module.css'
 import {Delete} from './delete/delete'
-import {
-  EXPERIMENT_STATE,
-  IExperiment,
-  EPetriExperimentState,
-} from '../../commons/petri'
-import classNames from 'classnames'
+import {EXPERIMENT_STATE, IExperiment} from '../../commons/petri'
 import {useLogin} from '../../hooks/login/useLogin'
 import {Loader} from '../loader/loader'
 import {Login} from '../login/login'
 import Button from 'react-bootstrap/Button'
 import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
+import {Experiment} from '../experiment/experiment'
+import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 
 export interface IListProps {
   experiments: IExperiment[]
   emptyText: React.ReactNode
 }
 
-export const List = ({experiments, emptyText}: IListProps) => {
+export const List: React.FC<IListProps> = ({experiments, emptyText}) => {
   const {authenticated, ready} = useLogin()
   const {reloadPetriExperiments, loaded} = usePetriExperiments()
+  const {setExperimentAuto} = useActiveExperiments()
 
   const getDropdownVariant = (experiment: IExperiment) => {
     switch (experiment.state) {
@@ -69,63 +66,7 @@ export const List = ({experiments, emptyText}: IListProps) => {
           <Accordion.Collapse eventKey={experiment.specName}>
             <Card.Body className={s.experimentCard}>
               {experiment.petriData ? (
-                <Card border="light">
-                  <Card.Body>
-                    <Card.Title>{experiment.specName}</Card.Title>
-                    <Card.Subtitle
-                      className={classNames(
-                        'mb-2 text-muted',
-                        s.experimentCardSubtitle,
-                      )}
-                    >
-                      {experiment.petriData.scopes.join(', ')}
-                    </Card.Subtitle>
-                    <Card.Text>
-                      <p className={s.pointsOfContact}>
-                        {experiment.petriData.pointsOfContact.map(
-                          (item, index) => (
-                            <>
-                              {Boolean(index) && ', '}
-                              <a
-                                href={`mailto:${item}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {item}
-                              </a>
-                            </>
-                          ),
-                        )}
-                      </p>
-                      <p>
-                        {experiment.petriData.state ===
-                          EPetriExperimentState.ACTIVE && (
-                          <Badge variant="success">
-                            {experiment.petriData.state}
-                          </Badge>
-                        )}
-                        {experiment.petriData.state ===
-                          EPetriExperimentState.ENDED && (
-                          <Badge variant="danger">
-                            {experiment.petriData.state}
-                          </Badge>
-                        )}
-                        {experiment.petriData.state ===
-                          EPetriExperimentState.FUTURE && (
-                          <Badge variant="primary">
-                            {experiment.petriData.state}
-                          </Badge>
-                        )}
-                        {experiment.petriData.state ===
-                          EPetriExperimentState.PAUSED && (
-                          <Badge variant="warning">
-                            {experiment.petriData.state}
-                          </Badge>
-                        )}
-                      </p>
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
+                <Experiment experiment={experiment} />
               ) : !ready ? (
                 <div className={s.loading}>
                   <Loader text={'Connecting...'} />
@@ -165,7 +106,12 @@ export const List = ({experiments, emptyText}: IListProps) => {
                 variant={getDropdownVariant(experiment)}
               >
                 {experiment.state !== EXPERIMENT_STATE.AUTO && (
-                  <Dropdown.Item eventKey="auto">Reset</Dropdown.Item>
+                  <Dropdown.Item
+                    eventKey="auto"
+                    onClick={() => setExperimentAuto(experiment.specName)}
+                  >
+                    Reset
+                  </Dropdown.Item>
                 )}
                 {experiment.state !== EXPERIMENT_STATE.CUSTOM &&
                   !Object.is(experiment.customState, undefined) && (
@@ -180,7 +126,7 @@ export const List = ({experiments, emptyText}: IListProps) => {
                     <Dropdown.Item eventKey="off">Disable</Dropdown.Item>
                   )}
               </DropdownButton>
-              <Delete />
+              <Delete specName={experiment.specName} />
             </>
           )}
         </Card>

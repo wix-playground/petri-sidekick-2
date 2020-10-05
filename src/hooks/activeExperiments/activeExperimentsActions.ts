@@ -38,18 +38,43 @@ export const completeActiveExperiments: IActionCreator = ({
   setValue(ACTIVE_EXPERIMENTS_MEMORY, getActiveExperiments(getState()))
 }
 
-export const loadActiveExperiments: IActionCreator = context => {
+export const loadActiveExperiments: IActionCreator = async context => {
   const {dispatch} = context
   const storedExperiments = getValue(ACTIVE_EXPERIMENTS_MEMORY) || []
 
-  chrome.cookies.getAll(
-    {
-      name: EXPERIMENTS_COOKIE_NAME,
-    },
-    cookies => {
-      dispatch({
-        type: ACTION_LOAD_ACTIVE_EXPERIMENTS,
-        payload: filterUniqueByKey(
+  const factualExperiments = await getFactualExperiments(storedExperiments)
+
+  const updatedStoredExperiments = await getUpdatedStoredExperiments(
+    storedExperiments,
+    factualExperiments,
+  )
+
+  const activeExperiments = filterUniqueByKey(
+    [...factualExperiments, ...updatedStoredExperiments],
+    'specName',
+  )
+
+  console.log({factualExperiments, updatedStoredExperiments, activeExperiments})
+
+  dispatch({
+    type: ACTION_LOAD_ACTIVE_EXPERIMENTS,
+    payload: activeExperiments,
+  })
+
+  updateBadge(context)
+  completeActiveExperiments(context)
+}
+
+const getFactualExperiments = (
+  storedExperiments: IExperiment[],
+): Promise<IExperiment[]> =>
+  new Promise(resolve => {
+    chrome.cookies.getAll(
+      {
+        name: EXPERIMENTS_COOKIE_NAME,
+      },
+      cookies => {
+        resolve(
           cookies
             .filter(cookie => EXPERIMENTS_DOMAINS.includes(cookie.domain))
             .flatMap(cookie => cookie.value.split('|'))
@@ -68,17 +93,25 @@ export const loadActiveExperiments: IActionCreator = context => {
                 } as IExperiment,
                 storedExperiments,
               ),
-            )
-            .concat(storedExperiments),
-          'specName',
-        ),
-      })
+            ),
+        )
+      },
+    )
+  })
 
-      updateBadge(context)
-      completeActiveExperiments(context)
-    },
+const getUpdatedStoredExperiments = (
+  storedExperiments: IExperiment[],
+  factualExperiments: IExperiment[],
+) =>
+  storedExperiments.map(experiment =>
+    factualExperiments.find(item => item.specName === experiment.state)
+      ? experiment
+      : {
+          ...experiment,
+          state: EXPERIMENT_STATE.AUTO,
+          customState: undefined,
+        },
   )
-}
 
 const getExperimentWithState = (
   newExperiment: IExperiment,
@@ -91,6 +124,7 @@ const getExperimentWithState = (
     storedExperiment && Object.is(storedExperiment.customState, undefined)
 
   if (!isBinary) {
+    console.log('So far this experiment is treated as not binary')
     return newExperiment
   }
 

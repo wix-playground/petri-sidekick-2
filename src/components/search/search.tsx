@@ -75,10 +75,6 @@ export const Search = () => {
     return <Loader text={'Loading experiments...'} />
   }
 
-  if (activeTab !== TAB.SEARCH) {
-    return null
-  }
-
   return (
     <>
       <div className={s.input}>
@@ -92,7 +88,7 @@ export const Search = () => {
         />
       </div>
       {experiment && (
-        <div className={s.result}>
+        <div className={s.result} key={experiment?.specName ?? '-'}>
           <ExperimentInfo experiment={experiment} />
         </div>
       )}

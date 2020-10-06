@@ -1,10 +1,35 @@
 # Petri Sidekick 2
 
-## TODO:
+## Development setup
 
-1) Make current implementation work
-2) Sort out design
-3) Add config tab
-4) Add experiment filtering options (to filter all events experiments for example)
-5) Add remembering experiments
-6) Add active experiments tab
+CLI:
+
+```
+clone git@github.com:wix-playground/petri-sidekick-2.git
+cd petri-sidekick-2
+npm install
+npm run build
+```
+
+Chrome:
+
+- Open extensions
+- Enable development mode (toggle)
+- Load unpacked - point to build folder
+
+## <br />
+
+## Updating development setup
+
+1. Pull
+2. npm run build
+3. Click refresh icon next to plugin in chrome://extensions/
+
+## <br />
+
+## Feedback
+
+Please feel free to register tickets (ideas, bugs, feedback) here:
+https://github.com/wix-playground/petri-sidekick-2/issues
+
+Or ping me (@vytenisu) via Slack

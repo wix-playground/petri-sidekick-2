@@ -1,0 +1,41 @@
+.item {
+  position: relative;
+  overflow: visible !important;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.item:hover {
+  opacity: 1;
+}
+
+.specName {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 400px;
+}
+
+.experimentCard {
+  padding: 1px;
+  cursor: default;
+}
+
+.emptyItem {
+  padding-top: 30px;
+  text-align: center;
+}
+
+.loading {
+  margin-bottom: 30px;
+}
+
+.refresh {
+  margin-top: 25px;
+  min-width: 160px;
+}
+
+.login {
+  margin-bottom: 30px;
+}

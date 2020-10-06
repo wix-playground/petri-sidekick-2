@@ -7,21 +7,23 @@ import {
   EXPERIMENT_STATE,
 } from '../../commons/petri'
 import Badge from 'react-bootstrap/Badge'
-import s from './experiment.module.css'
+import s from './experiment-info.module.css'
 
-export interface IExperimentProps {
+export interface IExperimentInfoProps {
   experiment: IExperiment
 }
 
-export const Experiment: React.FC<IExperimentProps> = ({experiment}) => {
+export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
+  experiment,
+}) => {
   const petriData = experiment.petriData as IPetriAggregatedData
 
   return (
     <Card border="light">
       <Card.Body>
-        {experiment.state === EXPERIMENT_STATE.CUSTOM && (
+        {/* {experiment.state === EXPERIMENT_STATE.CUSTOM && (
           <div>DROP DOWN HERE!</div>
-        )}
+        )} */}
         <Card.Title>{experiment.specName}</Card.Title>
         <Card.Subtitle className={'mb-2 text-muted'}>
           {petriData.scopes.join(', ')}

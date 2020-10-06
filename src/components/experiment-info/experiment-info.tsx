@@ -4,10 +4,11 @@ import {
   IExperiment,
   IPetriAggregatedData,
   EPetriExperimentState,
-  EXPERIMENT_STATE,
 } from '../../commons/petri'
 import Badge from 'react-bootstrap/Badge'
 import s from './experiment-info.module.css'
+import {Typeahead} from 'react-bootstrap-typeahead'
+import {Override} from '../override/override'
 
 export interface IExperimentInfoProps {
   experiment: IExperiment
@@ -21,9 +22,6 @@ export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
   return (
     <Card border="light">
       <Card.Body>
-        {/* {experiment.state === EXPERIMENT_STATE.CUSTOM && (
-          <div>DROP DOWN HERE!</div>
-        )} */}
         <Card.Title>{experiment.specName}</Card.Title>
         <Card.Subtitle className={'mb-2 text-muted'}>
           {petriData.scopes.join(', ')}
@@ -57,6 +55,7 @@ export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
               <Badge variant="warning">{petriData.state}</Badge>
             )}
           </p>
+          <Override experiment={experiment} />
         </Card.Text>
       </Card.Body>
     </Card>

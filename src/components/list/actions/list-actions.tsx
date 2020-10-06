@@ -71,7 +71,7 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
             Reset
           </Dropdown.Item>
         )}
-        {!isBinary && <Dropdown.Item eventKey="auto">Override</Dropdown.Item>}
+        {!isBinary && <Dropdown.Item eventKey="auto">Change</Dropdown.Item>}
         {experiment.state !== EXPERIMENT_STATE.ON && isBinary && (
           <Dropdown.Item
             eventKey="on"

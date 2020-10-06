@@ -7,10 +7,10 @@ import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperime
 import {Loader} from '../loader/loader'
 import {useLogin} from '../../hooks/login/useLogin'
 import {IExperiment} from '../../commons/petri'
-import Accordion from 'react-bootstrap/Accordion'
-import {ExperimentCard} from '../experiment-card/experiment-card'
 import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 import {ExperimentInfo} from '../experiment-info/experiment-info'
+import {useTabs} from '../../hooks/tabs/useTabs'
+import {TAB} from '../../hooks/tabs/tabsReducer'
 
 let resultTimeout: NodeJS.Timeout
 
@@ -27,7 +27,9 @@ export const Search = () => {
 
   const {authenticated, ready} = useLogin()
   const [experiment, setExperiment] = React.useState<IExperiment>()
-  const [query, setQuery] = React.useState<string>('')
+  const [inputQuery, setInputQuery] = React.useState<string>('')
+
+  const {activeTab} = useTabs()
 
   React.useEffect(() => {
     if (authenticated) {
@@ -35,6 +37,31 @@ export const Search = () => {
     }
     // eslint-disable-next-line
   }, [authenticated])
+
+  const showResult = (query: string = inputQuery) => {
+    resultTimeout && clearTimeout(resultTimeout)
+
+    const result =
+      findExperiment(query, activeExperiments) ||
+      findExperiment(query, petriExperiments)
+
+    result && setExperiment(result)
+    setInputQuery(query)
+  }
+
+  const debouncedShowResult = (query: string) => {
+    resultTimeout && clearTimeout(resultTimeout)
+    resultTimeout = setTimeout(() => showResult(query), SEARCH_DEBOUNCE_TIMEOUT)
+  }
+
+  React.useEffect(() => {
+    if (activeTab === TAB.SEARCH) {
+      showResult()
+    } else {
+      setExperiment(undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab])
 
   if (!ready) {
     return <Loader text={'Connecting...'} />
@@ -48,20 +75,8 @@ export const Search = () => {
     return <Loader text={'Loading experiments...'} />
   }
 
-  const showResult = (query: string) => {
-    resultTimeout && clearTimeout(resultTimeout)
-
-    const result =
-      findExperiment(query, activeExperiments) ||
-      findExperiment(query, petriExperiments)
-
-    result && setExperiment(result)
-    setQuery(query)
-  }
-
-  const debouncedShowResult = (query: string) => {
-    resultTimeout && clearTimeout(resultTimeout)
-    resultTimeout = setTimeout(() => showResult(query), SEARCH_DEBOUNCE_TIMEOUT)
+  if (activeTab !== TAB.SEARCH) {
+    return null
   }
 
   return (
@@ -72,6 +87,7 @@ export const Search = () => {
           options={getSearchQueries()}
           ignoreDiacritics={false}
           caseSensitive
+          highlightOnlyResult
           onChange={([query]) => showResult(query)}
           onInputChange={(query: string) => debouncedShowResult(query)}
         />

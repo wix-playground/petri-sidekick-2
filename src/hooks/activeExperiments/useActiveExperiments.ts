@@ -4,6 +4,7 @@ import {
 } from './activeExperimentsActions'
 import {IExperiment} from '../../commons/petri'
 import {getActiveExperiments} from './activeExperimentsReducer'
+import {setExperimentValue} from './activeExperimentsActions'
 import {
   forgetExperiment,
   turnBinaryExperimentOn,
@@ -19,6 +20,7 @@ export interface IUseActiveExperiments {
   activeExperiments: IExperiment[]
   loadActiveExperiments: IToConnectedActionCreator<typeof loadActiveExperiments>
   setExperimentAuto: IToConnectedActionCreator<typeof setExperimentAuto>
+  setExperimentValue: IToConnectedActionCreator<typeof setExperimentValue>
   forgetExperiment: IToConnectedActionCreator<typeof forgetExperiment>
   turnBinaryExperimentOn: IToConnectedActionCreator<
     typeof turnBinaryExperimentOn
@@ -34,6 +36,7 @@ export const useActiveExperiments = () => {
   const connectedActionCreators = connectActionCreators(dispatch, getState, {
     loadActiveExperiments,
     setExperimentAuto,
+    setExperimentValue,
     forgetExperiment,
     turnBinaryExperimentOn,
     turnBinaryExperimentOff,

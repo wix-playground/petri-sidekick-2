@@ -1,0 +1,13 @@
+.searchLine {
+  display: flex;
+  flex-direction: row;
+}
+
+.search {
+  flex: 5;
+}
+
+.button {
+  flex: 1;
+  margin-left: 5px;
+}

@@ -86,7 +86,6 @@ export const Search = () => {
           placeholder="Type experiment spec name here"
           options={getSearchQueries()}
           ignoreDiacritics={false}
-          caseSensitive
           highlightOnlyResult
           onChange={([query]) => showResult(query)}
           onInputChange={(query: string) => debouncedShowResult(query)}

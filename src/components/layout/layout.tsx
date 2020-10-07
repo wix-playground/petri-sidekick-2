@@ -7,11 +7,12 @@ import {List} from '../list/list'
 import s from './layout.module.css'
 import {Search} from '../search/search'
 import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
+import {useCachedTyping} from '../../hooks/cachedTyping/useCachedTyping'
 
 export const Layout = () => {
   const {activeTab, setActiveTab} = useTabs()
-
   const {activeExperiments, loadActiveExperiments} = useActiveExperiments()
+  const {addCachedTypingText, enabled: enabledCachedTyping} = useCachedTyping()
 
   const handleKeyPress = (e: KeyboardEvent) => {
     const LEFT_ARROW = 'ArrowLeft'
@@ -21,6 +22,15 @@ export const Layout = () => {
       setActiveTab(TAB.CURRENT)
     } else if (e.key === RIGHT_ARROW) {
       setActiveTab(TAB.SEARCH)
+    }
+
+    if (enabledCachedTyping) {
+      if (e.key.match(/^[a-zA-Z0-9_-]$/)) {
+        addCachedTypingText(e.key)
+        if (activeTab !== TAB.SEARCH) {
+          setActiveTab(TAB.SEARCH)
+        }
+      }
     }
   }
 

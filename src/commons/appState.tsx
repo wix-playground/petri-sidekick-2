@@ -2,6 +2,11 @@ import * as React from 'react'
 import {reduceActiveExperiments} from '../hooks/activeExperiments/activeExperimentsReducer'
 import {reducePetriExperiments} from '../hooks/petriExperiments/petriExperimentsReducer'
 import {reduceOverrideInput} from '../hooks/overrideInput/overrideInputReducer'
+import {reduceCachedTyping} from '../hooks/cachedTyping/cachedTypingReducer'
+import {
+  ICachedTypingState,
+  defaultCachedTypingState,
+} from '../hooks/cachedTyping/cachedTypingReducer'
 import {
   IOverrideInputState,
   defaultOverrideInputState,
@@ -69,6 +74,7 @@ export interface IAppState {
   login: ILoginState
   cards: ICardsState
   overrideInput: IOverrideInputState
+  cachedTyping: ICachedTypingState
 }
 
 export interface IAppStateContext {
@@ -84,6 +90,7 @@ const defaultState = {
   login: defaultLoginState,
   cards: defaultCardsState,
   overrideInput: defaultOverrideInputState,
+  cachedTyping: defaultCachedTypingState,
 }
 
 const getDefaultState = (): IAppState => defaultState
@@ -103,6 +110,7 @@ export const reducer = (state: IAppState, action: IAction): IAppState => ({
   login: reduceLogin(state.login, action),
   cards: reduceCards(state.cards, action),
   overrideInput: reduceOverrideInput(state.overrideInput, action),
+  cachedTyping: reduceCachedTyping(state.cachedTyping, action),
 })
 
 const stateStorage: {state: IAppState | null} = {

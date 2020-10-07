@@ -14,6 +14,7 @@ import {TAB} from '../../hooks/tabs/tabsReducer'
 import {useOverrideInput} from '../../hooks/overrideInput/useOverrideInput'
 import {FOCUS_DELAY} from '../../commons/constants'
 import {NoInfo} from '../no-info/no-info'
+import {useCachedTyping} from '../../hooks/cachedTyping/useCachedTyping'
 
 export const Search = () => {
   const element = React.useRef<any>()
@@ -32,13 +33,26 @@ export const Search = () => {
 
   const {activeTab} = useTabs()
   const {focusOverrideInput} = useOverrideInput()
+  const {text, disableCachedTyping, resetCachedTyping} = useCachedTyping()
 
   React.useEffect(() => {
     if (activeTab === TAB.SEARCH && element?.current) {
-      setTimeout(() => {
+      const flushAndFocus = () => {
         element.current?.focus()
-      }, FOCUS_DELAY)
+        resetCachedTyping()
+        disableCachedTyping()
+      }
+
+      if (text) {
+        flushAndFocus()
+      } else {
+        // When switching by clicking on tab - immediate focus does not work
+        setTimeout(() => {
+          flushAndFocus()
+        }, FOCUS_DELAY)
+      }
     }
+    // eslint-disable-next-line
   }, [activeTab, ready, authenticated, loaded])
 
   React.useEffect(() => {
@@ -103,6 +117,7 @@ export const Search = () => {
   }
 
   const keyDownHandler = (e: Event) => {
+    // FIXME: clicking enter on partial result like "spec" causes blur
     if ((e as KeyboardEvent).key === 'Enter' && element.current) {
       showResult()
     } else {
@@ -126,6 +141,7 @@ export const Search = () => {
             query && handleChange(query)
           }}
           onInputChange={handleChange}
+          defaultInputValue={text}
         />
       </div>
       {!experiment && inputQuery && (

@@ -94,6 +94,7 @@ export const setExperimentValue: IActionCreator = async (
     await setCookie(EXPERIMENTS_COOKIE_NAME, newCookieValue, domain)
   }
 
+  reloadRelevantTabs()
   loadActiveExperiments(context)
 }
 
@@ -236,4 +237,12 @@ const getExperimentWithState = (
   delete newExperiment.customState
 
   return newExperiment
+}
+
+const reloadRelevantTabs = () => {
+  const urlPatterns = EXPERIMENTS_DOMAINS.map(domain => `*://*${domain}/*`)
+
+  chrome.tabs.query({url: urlPatterns}, tabs => {
+    tabs.forEach(tab => (chrome.tabs.reload as any)(tab.id))
+  })
 }

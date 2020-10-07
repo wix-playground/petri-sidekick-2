@@ -22,10 +22,7 @@ export const List: React.FC<IListProps> = ({experiments, emptyText}) => {
         </Alert>
       )}
       {experiments.map(experiment => (
-        <ExperimentCard
-          experiment={experiment}
-          key={`${experiment.specName}-${experiment.customState}-${experiment.state}`}
-        />
+        <ExperimentCard experiment={experiment} key={experiment.specName} />
       ))}
     </Accordion>
   )

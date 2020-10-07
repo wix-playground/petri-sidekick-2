@@ -17,6 +17,8 @@ let resultTimeout: NodeJS.Timeout
 const SEARCH_DEBOUNCE_TIMEOUT = 400
 
 export const Search = () => {
+  const element = React.useRef<any>()
+
   const {
     loaded,
     loadPetriExperimentsIfNeeded,
@@ -30,6 +32,14 @@ export const Search = () => {
   const [inputQuery, setInputQuery] = React.useState<string>('')
 
   const {activeTab} = useTabs()
+
+  React.useEffect(() => {
+    if (activeTab === TAB.SEARCH && element?.current) {
+      setTimeout(() => {
+        element.current?.focus()
+      }, 400)
+    }
+  }, [activeTab, ready, authenticated, loaded])
 
   React.useEffect(() => {
     if (authenticated) {
@@ -75,10 +85,23 @@ export const Search = () => {
     return <Loader text={'Loading experiments...'} />
   }
 
+  const keyDownHandler = (e: Event) => {
+    if ((e as KeyboardEvent).key === 'Enter' && element.current) {
+      setTimeout(() => {
+        element.current?.blur()
+      })
+      // TODO: mark that override needs to focus
+    } else {
+      e.stopPropagation()
+    }
+  }
+
   return (
     <>
       <div className={s.input}>
         <Typeahead
+          onKeyDown={keyDownHandler}
+          ref={element}
           placeholder="Type experiment spec name here"
           options={getSearchQueries()}
           ignoreDiacritics={false}

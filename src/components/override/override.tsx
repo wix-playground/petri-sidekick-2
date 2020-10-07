@@ -78,16 +78,20 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
 
   const options = mapToLabels(experiment.petriData?.options ?? [])
 
-  const handleChange = (value: string = inputValue) => {
+  const handleSubmit = () => {
+    const valid = !inputValue || options.includes(inputValue)
+
+    if (valid) {
+      inputValue
+        ? setExperimentValue(experiment.specName, mapToValue(inputValue))
+        : setExperimentAuto(experiment.specName)
+    }
+  }
+
+  const handleChange = (value: string) => {
     const valid = !value || options.includes(value)
     setInvalid(!valid)
     setInputValue(value)
-
-    if (valid) {
-      value
-        ? setExperimentValue(experiment.specName, mapToValue(value))
-        : setExperimentAuto(experiment.specName)
-    }
   }
 
   const handleClear = () => {
@@ -102,27 +106,37 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
 
   const id = `${search ? 'search' : 'bookmark'}-input-${experiment.specName}`
 
+  const keyDownHandler = (e: Event) => {
+    if ((e as KeyboardEvent).key === 'Enter' && element.current) {
+      setTimeout(() => {
+        element.current?.blur()
+      })
+    } else {
+      e.stopPropagation()
+    }
+  }
+
   return (
     <>
       <h5>Override:</h5>
       <div className={s.searchLine}>
         <div className={s.search}>
           <Typeahead
+            onKeyDown={keyDownHandler}
             ref={element}
             id={id}
-            key={`${experiment.specName}`}
+            key={experiment.specName}
             placeholder="Choose value in order to override"
             options={options}
             ignoreDiacritics={false}
             onInputChange={handleChange}
             onChange={([query]) => {
               handleChange(query)
+              handleSubmit()
             }}
             highlightOnlyResult
             dropup
-            onBlur={() => {
-              handleChange()
-            }}
+            onBlur={handleSubmit}
             defaultInputValue={inputValue}
             isInvalid={invalid}
           />

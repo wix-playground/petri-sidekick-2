@@ -7,7 +7,6 @@ import {
 } from '../../commons/petri'
 import Badge from 'react-bootstrap/Badge'
 import s from './experiment-info.module.css'
-import {Typeahead} from 'react-bootstrap-typeahead'
 import {Override} from '../override/override'
 
 export interface IExperimentInfoProps {
@@ -55,7 +54,10 @@ export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
               <Badge variant="warning">{petriData.state}</Badge>
             )}
           </p>
-          <Override experiment={experiment} />
+          <Override
+            experiment={experiment}
+            key={`${experiment.specName}-${experiment.state}-${experiment.customState}`}
+          />
         </Card.Text>
       </Card.Body>
     </Card>

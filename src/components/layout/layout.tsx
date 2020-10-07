@@ -13,8 +13,21 @@ export const Layout = () => {
 
   const {activeExperiments, loadActiveExperiments} = useActiveExperiments()
 
+  const handleKeyPress = (e: KeyboardEvent) => {
+    const LEFT_ARROW = 'ArrowLeft'
+    const RIGHT_ARROW = 'ArrowRight'
+
+    if (e.key === LEFT_ARROW) {
+      setActiveTab(TAB.CURRENT)
+    } else if (e.key === RIGHT_ARROW) {
+      setActiveTab(TAB.SEARCH)
+    }
+  }
+
   React.useEffect(() => {
     loadActiveExperiments()
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
     // eslint-disable-next-line
   }, [])
 

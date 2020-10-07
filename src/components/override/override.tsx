@@ -5,14 +5,30 @@ import {IExperiment, EXPERIMENT_STATE} from '../../commons/petri'
 import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 import s from './override.module.css'
 import {isBinaryExperiment} from '../../commons/experiment'
+import {useCards} from '../../hooks/cards/useCards'
+import {useTabs} from '../../hooks/tabs/useTabs'
+import {TAB} from '../../hooks/tabs/tabsReducer'
 
 export interface IOverrideProps {
-  search?: boolean
   experiment: IExperiment
 }
 
-export const Override: React.FC<IOverrideProps> = ({search, experiment}) => {
+export const Override: React.FC<IOverrideProps> = ({experiment}) => {
   const element = React.useRef<any>()
+  const {focusSelect, activeCard, disableFocusSelect} = useCards()
+  const {activeTab} = useTabs()
+
+  const search = activeTab === TAB.SEARCH
+  const autoFocus = !search && focusSelect
+
+  React.useEffect(() => {
+    if (autoFocus && element?.current) {
+      disableFocusSelect()
+      setTimeout(() => {
+        element.current?.focus()
+      }, 400)
+    }
+  })
 
   const binary = isBinaryExperiment(experiment)
 
@@ -80,6 +96,12 @@ export const Override: React.FC<IOverrideProps> = ({search, experiment}) => {
     setInvalid(false)
   }
 
+  if (activeCard !== experiment.specName && !search) {
+    return null
+  }
+
+  const id = `${search ? 'search' : 'bookmark'}-input-${experiment.specName}`
+
   return (
     <>
       <h5>Override:</h5>
@@ -87,9 +109,7 @@ export const Override: React.FC<IOverrideProps> = ({search, experiment}) => {
         <div className={s.search}>
           <Typeahead
             ref={element}
-            id={`${search ? 'search' : 'bookmark'}-input-${
-              experiment.specName
-            }`}
+            id={id}
             key={`${experiment.specName}`}
             placeholder="Choose value in order to override"
             options={options}
@@ -98,12 +118,11 @@ export const Override: React.FC<IOverrideProps> = ({search, experiment}) => {
             onChange={([query]) => {
               handleChange(query)
             }}
-            // defaultOpen={false} // Use this to auto-open menu (maybe autofocus is enough)
             highlightOnlyResult
-            // autoFocus // Would also open menu
             dropup
-            onBlur={() => handleChange()}
-            // selected={[inputValue]}
+            onBlur={() => {
+              handleChange()
+            }}
             defaultInputValue={inputValue}
             isInvalid={invalid}
           />

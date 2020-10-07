@@ -6,8 +6,6 @@ import {useActiveExperiments} from '../../../hooks/activeExperiments/useActiveEx
 import {Delete} from '../delete/delete'
 import s from './list-actions.module.css'
 import {isBinaryExperiment} from '../../../commons/experiment'
-import {useAccordionToggle} from 'react-bootstrap/AccordionToggle'
-import Accordion from 'react-bootstrap/Accordion'
 import {useCards} from '../../../hooks/cards/useCards'
 
 export interface IListActionsProps {
@@ -80,7 +78,7 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
           <Dropdown.Item
             eventKey="auto"
             onClick={() => {
-              openCard(experiment.specName)
+              openCard(experiment.specName, true)
             }}
           >
             Change

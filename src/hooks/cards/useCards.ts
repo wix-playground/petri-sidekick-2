@@ -1,5 +1,5 @@
-import {openCard, toggleCard} from './cardsActions'
-import {getActiveCard} from './cardsReducer'
+import {openCard, toggleCard, disableFocusSelect} from './cardsActions'
+import {getActiveCard, getDefaultSelectFocus} from './cardsReducer'
 import {
   IToConnectedActionCreator,
   useAppState,
@@ -8,8 +8,10 @@ import {
 
 export interface IUseCards {
   activeCard: string
+  focusSelect: boolean
   openCard: IToConnectedActionCreator<typeof openCard>
   toggleCard: IToConnectedActionCreator<typeof toggleCard>
+  disableFocusSelect: IToConnectedActionCreator<typeof disableFocusSelect>
 }
 
 export const useCards = () => {
@@ -18,10 +20,12 @@ export const useCards = () => {
   const connectedActionCreators = connectActionCreators(dispatch, getState, {
     openCard,
     toggleCard,
+    disableFocusSelect,
   })
 
   return {
     activeCard: getActiveCard(state),
+    focusSelect: getDefaultSelectFocus(state),
     ...connectedActionCreators,
   } as IUseCards
 }

@@ -9,6 +9,7 @@ import {useCards} from '../../hooks/cards/useCards'
 import {useTabs} from '../../hooks/tabs/useTabs'
 import {TAB} from '../../hooks/tabs/tabsReducer'
 import {useOverrideInput} from '../../hooks/overrideInput/useOverrideInput'
+import {FOCUS_DELAY} from '../../commons/constants'
 
 export interface IOverrideProps {
   experiment: IExperiment
@@ -21,16 +22,15 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
   const {focus, disableOverrideInputFocus} = useOverrideInput()
 
   const search = activeTab === TAB.SEARCH
-  const autoFocus = focus
 
   React.useEffect(() => {
-    if (autoFocus && element?.current) {
+    if (focus && element?.current) {
       disableOverrideInputFocus()
       setTimeout(() => {
         element.current?.focus()
-      }, 400)
+      }, FOCUS_DELAY)
     }
-  })
+  }, [focus, disableOverrideInputFocus])
 
   const binary = isBinaryExperiment(experiment)
 

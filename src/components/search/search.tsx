@@ -11,10 +11,10 @@ import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExper
 import {ExperimentInfo} from '../experiment-info/experiment-info'
 import {useTabs} from '../../hooks/tabs/useTabs'
 import {TAB} from '../../hooks/tabs/tabsReducer'
+import {useOverrideInput} from '../../hooks/overrideInput/useOverrideInput'
+import {FOCUS_DELAY, DEBOUNCE_TIMEOUT} from '../../commons/constants'
 
 let resultTimeout: NodeJS.Timeout
-
-const SEARCH_DEBOUNCE_TIMEOUT = 400
 
 export const Search = () => {
   const element = React.useRef<any>()
@@ -32,12 +32,13 @@ export const Search = () => {
   const [inputQuery, setInputQuery] = React.useState<string>('')
 
   const {activeTab} = useTabs()
+  const {focusOverrideInput} = useOverrideInput()
 
   React.useEffect(() => {
     if (activeTab === TAB.SEARCH && element?.current) {
       setTimeout(() => {
         element.current?.focus()
-      }, 400)
+      }, FOCUS_DELAY)
     }
   }, [activeTab, ready, authenticated, loaded])
 
@@ -48,25 +49,31 @@ export const Search = () => {
     // eslint-disable-next-line
   }, [authenticated])
 
-  const showResult = (query: string = inputQuery) => {
+  const showResult = (query: string = inputQuery, noOverrideFocus = false) => {
     resultTimeout && clearTimeout(resultTimeout)
 
     const result =
       findExperiment(query, activeExperiments) ||
       findExperiment(query, petriExperiments)
 
-    result && setExperiment(result)
+    if (result) {
+      setExperiment(result)
+      if (!noOverrideFocus) {
+        focusOverrideInput()
+      }
+    }
+
     setInputQuery(query)
   }
 
   const debouncedShowResult = (query: string) => {
     resultTimeout && clearTimeout(resultTimeout)
-    resultTimeout = setTimeout(() => showResult(query), SEARCH_DEBOUNCE_TIMEOUT)
+    resultTimeout = setTimeout(() => showResult(query), DEBOUNCE_TIMEOUT)
   }
 
   React.useEffect(() => {
     if (activeTab === TAB.SEARCH) {
-      showResult()
+      showResult(undefined, true)
     } else {
       setExperiment(undefined)
     }

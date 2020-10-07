@@ -13,6 +13,7 @@ import {FOCUS_DELAY} from '../../commons/constants'
 
 export interface IOverrideProps {
   experiment: IExperiment
+  onChange?: () => void
 }
 
 export const Override: React.FC<IOverrideProps> = ({experiment}) => {

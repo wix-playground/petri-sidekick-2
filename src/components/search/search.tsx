@@ -49,25 +49,28 @@ export const Search = () => {
     // eslint-disable-next-line
   }, [authenticated])
 
-  const showResult = (query: string = inputQuery, noFocusChange = false) => {
-    resultTimeout && clearTimeout(resultTimeout)
+  const showResult = React.useCallback(
+    (query: string = inputQuery, noFocusChange = false) => {
+      resultTimeout && clearTimeout(resultTimeout)
 
-    const result =
-      findExperiment(query, activeExperiments) ||
-      findExperiment(query, petriExperiments)
+      const result =
+        findExperiment(query, activeExperiments) ||
+        findExperiment(query, petriExperiments)
 
-    if (result) {
-      setExperiment(result)
-      if (!noFocusChange) {
-        setTimeout(() => {
-          element.current?.blur()
-          focusOverrideInput()
-        })
+      if (result) {
+        setExperiment(result)
+        if (!noFocusChange) {
+          setTimeout(() => {
+            element.current?.blur()
+            focusOverrideInput()
+          })
+        }
       }
-    }
 
-    setInputQuery(query)
-  }
+      setInputQuery(query)
+    },
+    [activeExperiments, petriExperiments, focusOverrideInput, inputQuery],
+  )
 
   const debouncedShowResult = (query: string) => {
     resultTimeout && clearTimeout(resultTimeout)
@@ -75,13 +78,16 @@ export const Search = () => {
   }
 
   React.useEffect(() => {
+    showResult(undefined, true)
+  }, [activeExperiments, showResult])
+
+  React.useEffect(() => {
     if (activeTab === TAB.SEARCH) {
       showResult(undefined, true)
     } else {
       setExperiment(undefined)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab])
+  }, [activeTab, showResult])
 
   if (!ready) {
     return <Loader text={'Connecting...'} />
@@ -119,7 +125,7 @@ export const Search = () => {
         />
       </div>
       {experiment && (
-        <div className={s.result} key={experiment?.specName ?? '-'}>
+        <div className={s.result}>
           <ExperimentInfo experiment={experiment} />
         </div>
       )}

@@ -1,0 +1,3 @@
+.badge:not(:first-of-type) {
+  margin-left: 6px;
+}

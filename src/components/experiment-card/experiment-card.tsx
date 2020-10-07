@@ -11,6 +11,7 @@ import {ListActions} from '../list/actions/list-actions'
 import {useLogin} from '../../hooks/login/useLogin'
 import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
 import s from './experiment-card.module.css'
+import {useCards} from '../../hooks/cards/useCards'
 
 export interface ICardProps {
   experiment: IExperiment
@@ -19,10 +20,17 @@ export interface ICardProps {
 export const ExperimentCard: React.FC<any> = ({experiment}) => {
   const {authenticated, ready} = useLogin()
   const {reloadPetriExperiments, loaded} = usePetriExperiments()
+  const {toggleCard} = useCards()
 
   return (
     <Card className={s.item}>
-      <Accordion.Toggle as={Card.Header} eventKey={experiment.specName}>
+      <Accordion.Toggle
+        as={Card.Header}
+        eventKey={experiment.specName}
+        onClick={() => {
+          toggleCard(experiment.specName)
+        }}
+      >
         <div className={s.specName}>{experiment.specName}</div>
       </Accordion.Toggle>
       <Accordion.Collapse eventKey={experiment.specName}>

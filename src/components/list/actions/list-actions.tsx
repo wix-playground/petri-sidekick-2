@@ -6,6 +6,9 @@ import {useActiveExperiments} from '../../../hooks/activeExperiments/useActiveEx
 import {Delete} from '../delete/delete'
 import s from './list-actions.module.css'
 import {isBinaryExperiment} from '../../../commons/experiment'
+import {useAccordionToggle} from 'react-bootstrap/AccordionToggle'
+import Accordion from 'react-bootstrap/Accordion'
+import {useCards} from '../../../hooks/cards/useCards'
 
 export interface IListActionsProps {
   experiment: IExperiment
@@ -44,6 +47,8 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
     turnBinaryExperimentOn,
   } = useActiveExperiments()
 
+  const {openCard} = useCards()
+
   const isBinary = isBinaryExperiment(experiment)
   const title = getDropdownValue(experiment)
 
@@ -65,13 +70,22 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
       >
         {experiment.state !== EXPERIMENT_STATE.AUTO && (
           <Dropdown.Item
-            eventKey="auto"
+            eventKey="reset"
             onClick={() => setExperimentAuto(experiment.specName)}
           >
             Reset
           </Dropdown.Item>
         )}
-        {!isBinary && <Dropdown.Item eventKey="auto">Change</Dropdown.Item>}
+        {!isBinary && (
+          <Dropdown.Item
+            eventKey="auto"
+            onClick={() => {
+              openCard(experiment.specName)
+            }}
+          >
+            Change
+          </Dropdown.Item>
+        )}
         {experiment.state !== EXPERIMENT_STATE.ON && isBinary && (
           <Dropdown.Item
             eventKey="on"

@@ -8,6 +8,7 @@ import {isBinaryExperiment} from '../../commons/experiment'
 import {useCards} from '../../hooks/cards/useCards'
 import {useTabs} from '../../hooks/tabs/useTabs'
 import {TAB} from '../../hooks/tabs/tabsReducer'
+import {useOverrideInput} from '../../hooks/overrideInput/useOverrideInput'
 
 export interface IOverrideProps {
   experiment: IExperiment
@@ -15,15 +16,16 @@ export interface IOverrideProps {
 
 export const Override: React.FC<IOverrideProps> = ({experiment}) => {
   const element = React.useRef<any>()
-  const {focusSelect, activeCard, disableFocusSelect} = useCards()
+  const {activeCard} = useCards()
   const {activeTab} = useTabs()
+  const {focus, disableOverrideInputFocus} = useOverrideInput()
 
   const search = activeTab === TAB.SEARCH
-  const autoFocus = !search && focusSelect
+  const autoFocus = focus
 
   React.useEffect(() => {
     if (autoFocus && element?.current) {
-      disableFocusSelect()
+      disableOverrideInputFocus()
       setTimeout(() => {
         element.current?.focus()
       }, 400)
@@ -78,14 +80,18 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
 
   const options = mapToLabels(experiment.petriData?.options ?? [])
 
-  const handleSubmit = () => {
-    const valid = !inputValue || options.includes(inputValue)
+  const handleSubmit = (value: string = inputValue) => {
+    const valid = !value || options.includes(value)
 
     if (valid) {
-      inputValue
-        ? setExperimentValue(experiment.specName, mapToValue(inputValue))
+      value
+        ? setExperimentValue(experiment.specName, mapToValue(value))
         : setExperimentAuto(experiment.specName)
     }
+
+    setTimeout(() => {
+      element.current?.blur()
+    })
   }
 
   const handleChange = (value: string) => {
@@ -108,9 +114,7 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
 
   const keyDownHandler = (e: Event) => {
     if ((e as KeyboardEvent).key === 'Enter' && element.current) {
-      setTimeout(() => {
-        element.current?.blur()
-      })
+      handleSubmit()
     } else {
       e.stopPropagation()
     }
@@ -132,11 +136,11 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
             onInputChange={handleChange}
             onChange={([query]) => {
               handleChange(query)
-              handleSubmit()
+              handleSubmit(query)
             }}
             highlightOnlyResult
             dropup
-            onBlur={handleSubmit}
+            onBlur={() => handleSubmit()}
             defaultInputValue={inputValue}
             isInvalid={invalid}
           />

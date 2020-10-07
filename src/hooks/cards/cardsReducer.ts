@@ -7,12 +7,10 @@ import {
 
 export interface ICardsState {
   activeCard: string | null
-  focusSelect: boolean
 }
 
 export const defaultCardsState: ICardsState = {
   activeCard: null,
-  focusSelect: false,
 }
 
 export const reduceCards = (
@@ -21,26 +19,22 @@ export const reduceCards = (
 ): ICardsState => {
   switch (action.type) {
     case ACTION_OPEN_CARD:
-      const {specName: activeCard, focusSelect} = action.payload
-      return {...state, activeCard, focusSelect}
+      const {specName: activeCard} = action.payload
+      return {...state, activeCard}
     case ACTION_TOGGLE_CARD:
       if (state.activeCard === action.payload.specName) {
-        return {...state, activeCard: null, focusSelect: false}
+        return {...state, activeCard: null}
       } else {
         return {
           ...state,
           activeCard: action.payload.specName,
-          focusSelect: false,
         }
       }
     case ACTION_DISABLE_FOCUS_SELECT:
-      return {...state, focusSelect: false}
+      return {...state}
     default:
       return state
   }
 }
 
 export const getActiveCard = (state: IAppState) => state.cards.activeCard
-
-export const getDefaultSelectFocus = (state: IAppState) =>
-  state.cards.focusSelect

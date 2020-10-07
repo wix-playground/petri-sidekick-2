@@ -1,6 +1,11 @@
 import * as React from 'react'
 import {reduceActiveExperiments} from '../hooks/activeExperiments/activeExperimentsReducer'
 import {reducePetriExperiments} from '../hooks/petriExperiments/petriExperimentsReducer'
+import {reduceOverrideInput} from '../hooks/overrideInput/overrideInputReducer'
+import {
+  IOverrideInputState,
+  defaultOverrideInputState,
+} from '../hooks/overrideInput/overrideInputReducer'
 import {
   ICardsState,
   defaultCardsState,
@@ -63,6 +68,7 @@ export interface IAppState {
   petriExperiments: IPetriExperimentsState
   login: ILoginState
   cards: ICardsState
+  overrideInput: IOverrideInputState
 }
 
 export interface IAppStateContext {
@@ -77,6 +83,7 @@ const defaultState = {
   petriExperiments: defaultPetriExperimentsState,
   login: defaultLoginState,
   cards: defaultCardsState,
+  overrideInput: defaultOverrideInputState,
 }
 
 const getDefaultState = (): IAppState => defaultState
@@ -95,6 +102,7 @@ export const reducer = (state: IAppState, action: IAction): IAppState => ({
   petriExperiments: reducePetriExperiments(state.petriExperiments, action),
   login: reduceLogin(state.login, action),
   cards: reduceCards(state.cards, action),
+  overrideInput: reduceOverrideInput(state.overrideInput, action),
 })
 
 const stateStorage: {state: IAppState | null} = {

@@ -12,9 +12,8 @@ import {ExperimentInfo} from '../experiment-info/experiment-info'
 import {useTabs} from '../../hooks/tabs/useTabs'
 import {TAB} from '../../hooks/tabs/tabsReducer'
 import {useOverrideInput} from '../../hooks/overrideInput/useOverrideInput'
-import {FOCUS_DELAY, DEBOUNCE_TIMEOUT} from '../../commons/constants'
-
-let resultTimeout: NodeJS.Timeout
+import {FOCUS_DELAY} from '../../commons/constants'
+import {NoInfo} from '../no-info/no-info'
 
 export const Search = () => {
   const element = React.useRef<any>()
@@ -51,20 +50,21 @@ export const Search = () => {
 
   const showResult = React.useCallback(
     (query: string = inputQuery, noFocusChange = false) => {
-      resultTimeout && clearTimeout(resultTimeout)
-
       const result =
         findExperiment(query, activeExperiments) ||
         findExperiment(query, petriExperiments)
 
       if (result) {
         setExperiment(result)
-        if (!noFocusChange) {
-          setTimeout(() => {
-            element.current?.blur()
-            focusOverrideInput()
-          })
-        }
+      } else {
+        setExperiment(undefined)
+      }
+
+      if (!noFocusChange) {
+        setTimeout(() => {
+          element.current?.blur()
+          result && focusOverrideInput()
+        })
       }
 
       setInputQuery(query)
@@ -72,14 +72,14 @@ export const Search = () => {
     [activeExperiments, petriExperiments, focusOverrideInput, inputQuery],
   )
 
-  const debouncedShowResult = (query: string) => {
-    resultTimeout && clearTimeout(resultTimeout)
-    resultTimeout = setTimeout(() => showResult(query, true), DEBOUNCE_TIMEOUT)
+  const handleChange = (query: string) => {
+    setInputQuery(query)
   }
 
   React.useEffect(() => {
     showResult(undefined, true)
-  }, [activeExperiments, showResult])
+    // eslint-disable-next-line
+  }, [activeExperiments])
 
   React.useEffect(() => {
     if (activeTab === TAB.SEARCH) {
@@ -87,7 +87,8 @@ export const Search = () => {
     } else {
       setExperiment(undefined)
     }
-  }, [activeTab, showResult])
+    // eslint-disable-next-line
+  }, [activeTab])
 
   if (!ready) {
     return <Loader text={'Connecting...'} />
@@ -119,11 +120,20 @@ export const Search = () => {
           options={getSearchQueries()}
           ignoreDiacritics={false}
           highlightOnlyResult
-          onChange={([query]) => showResult(query)}
+          onMenuHide={showResult}
           onBlur={() => showResult()}
-          onInputChange={(query: string) => debouncedShowResult(query)}
+          onChange={([query]) => {
+            query && handleChange(query)
+          }}
+          onInputChange={handleChange}
         />
       </div>
+      {!experiment && inputQuery && (
+        <NoInfo
+          message={`Could not find your experiment...`}
+          buttonName="Update"
+        />
+      )}
       {experiment && (
         <div className={s.result}>
           <ExperimentInfo experiment={experiment} />

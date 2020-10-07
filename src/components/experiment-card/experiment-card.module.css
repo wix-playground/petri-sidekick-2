@@ -22,18 +22,8 @@
   cursor: default;
 }
 
-.emptyItem {
-  padding-top: 30px;
-  text-align: center;
-}
-
 .loading {
   margin-bottom: 30px;
-}
-
-.refresh {
-  margin-top: 25px;
-  min-width: 160px;
 }
 
 .login {

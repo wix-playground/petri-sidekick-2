@@ -4,14 +4,13 @@ import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import {ExperimentInfo} from '../experiment-info/experiment-info'
 import {Loader} from '../loader/loader'
-import Alert from 'react-bootstrap/Alert'
-import Button from 'react-bootstrap/Button'
 import {Login} from '../login/login'
 import {ListActions} from '../actions/actions'
 import {useLogin} from '../../hooks/login/useLogin'
 import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
 import s from './experiment-card.module.css'
 import {useCards} from '../../hooks/cards/useCards'
+import {NoInfo} from '../no-info/no-info'
 
 export interface ICardProps {
   experiment: IExperiment
@@ -19,7 +18,7 @@ export interface ICardProps {
 
 export const ExperimentCard: React.FC<any> = ({experiment}) => {
   const {authenticated, ready} = useLogin()
-  const {reloadPetriExperiments, loaded} = usePetriExperiments()
+  const {loaded} = usePetriExperiments()
   const {toggleCard} = useCards()
 
   return (
@@ -47,16 +46,10 @@ export const ExperimentCard: React.FC<any> = ({experiment}) => {
                 <Loader text={'Loading experiments...'} />
               </div>
             ) : (
-              <Alert className={s.emptyItem} variant={'light'}>
-                <div>More detailed information is not loaded</div>
-                <Button
-                  variant="primary"
-                  className={s.refresh}
-                  onClick={reloadPetriExperiments}
-                >
-                  Update
-                </Button>
-              </Alert>
+              <NoInfo
+                message="More detailed information is not loaded"
+                buttonName="Update"
+              />
             )
           ) : (
             <div className={s.login}>

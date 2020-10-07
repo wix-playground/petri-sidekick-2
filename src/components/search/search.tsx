@@ -49,7 +49,7 @@ export const Search = () => {
     // eslint-disable-next-line
   }, [authenticated])
 
-  const showResult = (query: string = inputQuery, noOverrideFocus = false) => {
+  const showResult = (query: string = inputQuery, noFocusChange = false) => {
     resultTimeout && clearTimeout(resultTimeout)
 
     const result =
@@ -58,8 +58,11 @@ export const Search = () => {
 
     if (result) {
       setExperiment(result)
-      if (!noOverrideFocus) {
-        focusOverrideInput()
+      if (!noFocusChange) {
+        setTimeout(() => {
+          element.current?.blur()
+          focusOverrideInput()
+        })
       }
     }
 
@@ -68,7 +71,7 @@ export const Search = () => {
 
   const debouncedShowResult = (query: string) => {
     resultTimeout && clearTimeout(resultTimeout)
-    resultTimeout = setTimeout(() => showResult(query), DEBOUNCE_TIMEOUT)
+    resultTimeout = setTimeout(() => showResult(query, true), DEBOUNCE_TIMEOUT)
   }
 
   React.useEffect(() => {
@@ -94,10 +97,7 @@ export const Search = () => {
 
   const keyDownHandler = (e: Event) => {
     if ((e as KeyboardEvent).key === 'Enter' && element.current) {
-      setTimeout(() => {
-        element.current?.blur()
-      })
-      // TODO: mark that override needs to focus
+      showResult()
     } else {
       e.stopPropagation()
     }
@@ -114,6 +114,7 @@ export const Search = () => {
           ignoreDiacritics={false}
           highlightOnlyResult
           onChange={([query]) => showResult(query)}
+          onBlur={() => showResult()}
           onInputChange={(query: string) => debouncedShowResult(query)}
         />
       </div>

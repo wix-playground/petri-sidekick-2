@@ -2,7 +2,7 @@ import * as React from 'react'
 import Button from 'react-bootstrap/Button'
 import {TiDelete, TiDeleteOutline} from 'react-icons/ti'
 import s from './delete.module.css'
-import {useActiveExperiments} from '../../../hooks/activeExperiments/useActiveExperiments'
+import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 
 export interface IDeleteProps {
   specName: string

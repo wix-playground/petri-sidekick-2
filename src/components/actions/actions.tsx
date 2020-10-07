@@ -1,12 +1,12 @@
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import * as React from 'react'
-import {EXPERIMENT_STATE, IExperiment} from '../../../commons/petri'
+import {EXPERIMENT_STATE, IExperiment} from '../../commons/petri'
 import Dropdown from 'react-bootstrap/Dropdown'
-import {useActiveExperiments} from '../../../hooks/activeExperiments/useActiveExperiments'
+import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 import {Delete} from '../delete/delete'
-import s from './list-actions.module.css'
-import {isBinaryExperiment} from '../../../commons/experiment'
-import {useCards} from '../../../hooks/cards/useCards'
+import s from './actions.module.css'
+import {isBinaryExperiment} from '../../commons/experiment'
+import {useCards} from '../../hooks/cards/useCards'
 
 export interface IListActionsProps {
   experiment: IExperiment

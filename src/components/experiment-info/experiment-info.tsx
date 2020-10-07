@@ -8,6 +8,7 @@ import {
 import Badge from 'react-bootstrap/Badge'
 import s from './experiment-info.module.css'
 import {Override} from '../override/override'
+import {Badges} from '../badges/badges'
 
 export interface IExperimentInfoProps {
   experiment: IExperiment
@@ -40,20 +41,7 @@ export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
               </>
             ))}
           </p>
-          <p>
-            {petriData.state === EPetriExperimentState.ACTIVE && (
-              <Badge variant="success">{petriData.state}</Badge>
-            )}
-            {petriData.state === EPetriExperimentState.ENDED && (
-              <Badge variant="danger">{petriData.state}</Badge>
-            )}
-            {petriData.state === EPetriExperimentState.FUTURE && (
-              <Badge variant="primary">{petriData.state}</Badge>
-            )}
-            {petriData.state === EPetriExperimentState.PAUSED && (
-              <Badge variant="warning">{petriData.state}</Badge>
-            )}
-          </p>
+          <Badges experiment={experiment} />
           <Override
             experiment={experiment}
             key={`${experiment.specName}-${experiment.state}-${experiment.customState}`}

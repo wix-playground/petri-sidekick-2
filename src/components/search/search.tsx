@@ -63,29 +63,26 @@ export const Search = () => {
     // eslint-disable-next-line
   }, [authenticated])
 
-  const showResult = React.useCallback(
-    (query: string = inputQuery, noFocusChange = false) => {
-      const result =
-        findExperiment(query, activeExperiments) ||
-        findExperiment(query, petriExperiments)
+  const showResult = (query: string = inputQuery, noFocusChange = false) => {
+    const result =
+      findExperiment(query, activeExperiments) ||
+      findExperiment(query, petriExperiments)
 
-      if (result) {
-        setExperiment(result)
-      } else {
-        setExperiment(undefined)
-      }
+    if (result) {
+      setExperiment(result)
+    } else {
+      setExperiment(undefined)
+    }
 
-      if (!noFocusChange && (result || !query)) {
-        setTimeout(() => {
-          element.current?.blur()
-          result && focusOverrideInput()
-        })
-      }
+    if (!noFocusChange && (result || !query)) {
+      setTimeout(() => {
+        element.current?.blur()
+        result && focusOverrideInput()
+      })
+    }
 
-      setInputQuery(query)
-    },
-    [activeExperiments, petriExperiments, focusOverrideInput, inputQuery],
-  )
+    setInputQuery(query)
+  }
 
   const handleChange = (query: string) => {
     setInputQuery(query)

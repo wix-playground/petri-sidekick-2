@@ -1,7 +1,7 @@
 const LOGIN_REDIRECT_URL = 'https://bo.wix.com/petri'
 const LOGIN_URL = `https://bo.wix.com/wix-authentication-server/login/?url=${LOGIN_REDIRECT_URL}`
 
-const REDIRECT_CHECK_INTERVAL = 100
+const REDIRECT_CHECK_INTERVAL = 500
 
 const storage = {}
 const pendingGetRequests = {}
@@ -11,8 +11,30 @@ const chromeApi = chrome
 
 const handleLogin = (message, sendReply) => {
   chromeApi.tabs.create({url: LOGIN_URL, active: false}, tab => {
+    let buttonPressed = false
+
     const closeCheckInterval = setInterval(() => {
       chromeApi.tabs.get(tab.id, loginTab => {
+        const LOGIN_BUTTON_ID = 'signinButton'
+
+        if (!buttonPressed) {
+          chromeApi.tabs.executeScript(
+            tab.id,
+            {
+              code: `document.getElementById('${LOGIN_BUTTON_ID}') !== null`,
+            },
+            ([buttonExists]) => {
+              if (buttonExists) {
+                buttonPressed = true
+
+                chromeApi.tabs.executeScript(tab.id, {
+                  code: `document.getElementById('${LOGIN_BUTTON_ID}')?.click()`,
+                })
+              }
+            },
+          )
+        }
+
         if (loginTab.url?.startsWith(LOGIN_REDIRECT_URL)) {
           clearInterval(closeCheckInterval)
           chromeApi.tabs.remove(loginTab.id)

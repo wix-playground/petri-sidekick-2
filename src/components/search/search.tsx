@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Typeahead} from 'react-bootstrap-typeahead'
 import s from './search.module.css'
-import {getSearchQueries} from '../../commons/localStorage'
+import {getSearchQueries, addSearchQuery} from '../../commons/localStorage'
 import {Login} from '../login/login'
 import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperiments'
 import {Loader} from '../loader/loader'
@@ -69,6 +69,7 @@ export const Search = () => {
       findExperiment(query, petriExperiments)
 
     if (result) {
+      addSearchQuery(query)
       setExperiment(result)
     } else {
       setExperiment(undefined)

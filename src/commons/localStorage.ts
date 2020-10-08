@@ -1,4 +1,5 @@
 import {IExperiment} from './petri'
+import {filterUnique} from './arrays'
 
 export const EXPERIMENTS_MEMORY = 'experiments'
 export const ACTIVE_EXPERIMENTS_MEMORY = 'active-experiments'
@@ -75,7 +76,7 @@ export const addSearchQuery = (query: string) => {
   if (memory[query]) {
     memory[query]++
   } else {
-    for (let existentQuery of memory) {
+    for (let existentQuery in memory) {
       memory[existentQuery]--
     }
 
@@ -100,10 +101,10 @@ export const addSearchQuery = (query: string) => {
 }
 
 export const getSearchQueries = () => {
-  const suggestions = [
+  const suggestions = filterUnique([
     ...Object.keys(getValue(SEARCH_MEMORY) || {}),
     ...getExperimentSpecSuggestions(),
-  ]
+  ])
 
   return suggestions
 }

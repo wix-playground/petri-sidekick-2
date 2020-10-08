@@ -5,7 +5,7 @@
 CLI:
 
 ```
-clone git@github.com:wix-playground/petri-sidekick-2.git
+git clone git@github.com:wix-playground/petri-sidekick-2.git
 cd petri-sidekick-2
 npm install
 npm run build

@@ -7,6 +7,7 @@ import {Delete} from '../delete/delete'
 import s from './actions.module.css'
 import {isBinaryExperiment} from '../../commons/experiments'
 import {useCards} from '../../hooks/cards/useCards'
+import {TEST_ID} from '../../commons/test-ids'
 
 export interface IListActionsProps {
   experiment: IExperiment
@@ -32,49 +33,51 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
           : undefined
       }
     >
-      <DropdownButton
-        id={`experiment_${experiment.specName}`}
-        size="sm"
-        drop="left"
-        className={s.actions}
-        title={title}
-        variant={getDropdownVariant(experiment)}
-      >
-        {experiment.state !== EXPERIMENT_STATE.AUTO && (
-          <Dropdown.Item
-            eventKey="reset"
-            onClick={() => setExperimentAuto(experiment.specName)}
-          >
-            Reset
-          </Dropdown.Item>
-        )}
-        {!isBinary && (
-          <Dropdown.Item
-            eventKey="auto"
-            onClick={() => {
-              openCard(experiment.specName, true)
-            }}
-          >
-            Change
-          </Dropdown.Item>
-        )}
-        {experiment.state !== EXPERIMENT_STATE.ON && isBinary && (
-          <Dropdown.Item
-            eventKey="on"
-            onClick={() => turnBinaryExperimentOn(experiment.specName)}
-          >
-            Enable
-          </Dropdown.Item>
-        )}
-        {experiment.state !== EXPERIMENT_STATE.OFF && isBinary && (
-          <Dropdown.Item
-            eventKey="off"
-            onClick={() => turnBinaryExperimentOff(experiment.specName)}
-          >
-            Disable
-          </Dropdown.Item>
-        )}
-      </DropdownButton>
+      <div data-testid={TEST_ID.LIST_ITEM_SWITCH}>
+        <DropdownButton
+          id={`experiment_${experiment.specName}`}
+          size="sm"
+          drop="left"
+          className={s.actions}
+          title={title}
+          variant={getDropdownVariant(experiment)}
+        >
+          {experiment.state !== EXPERIMENT_STATE.AUTO && (
+            <Dropdown.Item
+              eventKey="reset"
+              onClick={() => setExperimentAuto(experiment.specName)}
+            >
+              Reset
+            </Dropdown.Item>
+          )}
+          {!isBinary && (
+            <Dropdown.Item
+              eventKey="auto"
+              onClick={() => {
+                openCard(experiment.specName, true)
+              }}
+            >
+              Change
+            </Dropdown.Item>
+          )}
+          {experiment.state !== EXPERIMENT_STATE.ON && isBinary && (
+            <Dropdown.Item
+              eventKey="on"
+              onClick={() => turnBinaryExperimentOn(experiment.specName)}
+            >
+              Enable
+            </Dropdown.Item>
+          )}
+          {experiment.state !== EXPERIMENT_STATE.OFF && isBinary && (
+            <Dropdown.Item
+              eventKey="off"
+              onClick={() => turnBinaryExperimentOff(experiment.specName)}
+            >
+              Disable
+            </Dropdown.Item>
+          )}
+        </DropdownButton>
+      </div>
       <Delete specName={experiment.specName} />
     </div>
   )

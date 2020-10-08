@@ -11,6 +11,7 @@ import {usePetriExperiments} from '../../hooks/petriExperiments/usePetriExperime
 import s from './experiment-card.module.css'
 import {useCards} from '../../hooks/cards/useCards'
 import {NoInfo} from '../no-info/no-info'
+import {TEST_ID} from '../../commons/test-ids'
 
 export interface ICardProps {
   experiment: IExperiment
@@ -32,7 +33,9 @@ export const ExperimentCard: React.FC<any> = ({experiment}) => {
           toggleCard(specName)
         }}
       >
-        <div className={s.specName}>{specName}</div>
+        <div className={s.specName} data-testid={TEST_ID.LIST_ITEM_TITLE}>
+          {specName}
+        </div>
       </Accordion.Toggle>
       <Accordion.Collapse eventKey={specName}>
         <Card.Body className={s.experimentCard}>

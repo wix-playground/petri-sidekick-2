@@ -5,6 +5,7 @@ import s from './list.module.css'
 import {IExperiment} from '../../commons/petri'
 import {ExperimentCard} from '../experiment-card/experiment-card'
 import {useCards} from '../../hooks/cards/useCards'
+import {TEST_ID} from '../../commons/test-ids'
 
 export interface IListProps {
   experiments: IExperiment[]
@@ -22,7 +23,9 @@ export const List: React.FC<IListProps> = ({experiments, emptyText}) => {
         </Alert>
       )}
       {experiments.map(experiment => (
-        <ExperimentCard experiment={experiment} key={experiment.specName} />
+        <div data-testid={TEST_ID.LIST_ITEM} key={experiment.specName}>
+          <ExperimentCard experiment={experiment} />
+        </div>
       ))}
     </Accordion>
   )

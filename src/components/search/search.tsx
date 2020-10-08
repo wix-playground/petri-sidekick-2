@@ -39,6 +39,7 @@ export const Search = () => {
     if (activeTab === TAB.SEARCH && element?.current) {
       const flushAndFocus = () => {
         element.current?.focus()
+        setInputQuery(text)
         resetCachedTyping()
         disableCachedTyping()
       }
@@ -74,7 +75,7 @@ export const Search = () => {
         setExperiment(undefined)
       }
 
-      if (!noFocusChange) {
+      if (!noFocusChange && (result || !query)) {
         setTimeout(() => {
           element.current?.blur()
           result && focusOverrideInput()
@@ -99,6 +100,7 @@ export const Search = () => {
     if (activeTab === TAB.SEARCH) {
       showResult(undefined, true)
     } else {
+      setInputQuery('')
       setExperiment(undefined)
     }
     // eslint-disable-next-line
@@ -121,7 +123,6 @@ export const Search = () => {
   }
 
   const keyDownHandler = (e: Event) => {
-    // FIXME: clicking enter on partial result like "spec" causes blur
     if ((e as KeyboardEvent).key === 'Enter' && element.current) {
       showResult()
     } else {
@@ -142,7 +143,7 @@ export const Search = () => {
           onMenuHide={showResult}
           onBlur={() => showResult()}
           onChange={([query]) => {
-            query && handleChange(query)
+            query && showResult(query)
           }}
           onInputChange={handleChange}
           defaultInputValue={text}

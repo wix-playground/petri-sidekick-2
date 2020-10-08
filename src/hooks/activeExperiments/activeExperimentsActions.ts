@@ -116,6 +116,7 @@ export const setExperimentAuto: IActionCreator = async (
     await setCookie(EXPERIMENTS_COOKIE_NAME, newCookieValue, domain)
   }
 
+  reloadRelevantTabs()
   loadActiveExperiments(context)
 }
 

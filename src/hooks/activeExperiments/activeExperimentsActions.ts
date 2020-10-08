@@ -1,9 +1,5 @@
 import {IActionCreator} from '../../commons/appState'
-import {
-  EXPERIMENT_STATE,
-  IExperiment,
-  IExperimentCookieData,
-} from '../../commons/petri'
+import {EXPERIMENT_STATE, IExperiment} from '../../commons/petri'
 import {
   getActiveExperimentAmount,
   getActiveExperiments,
@@ -15,26 +11,16 @@ import {
 } from '../../commons/localStorage'
 import {getPetriExperiments} from '../petriExperiments/petriExperimentsReducer'
 import {filterUniqueByKey} from '../../commons/arrays'
-import {setCookie} from '../../commons/cookies'
-import {isBinaryExperiment} from '../../commons/experiment'
+import {setCookie, getExperimentsFromCookies} from '../../commons/cookies'
+import {getFactualExperiments} from '../../commons/experiments'
+import {
+  EXPERIMENTS_COOKIE_NAME,
+  EXPERIMENTS_DOMAINS,
+} from '../../commons/constants'
 
 export const ACTION_COMPLETE_ACTIVE_EXPERIMENTS = 'ACTION_COMPL_ACT_EXPERIMENTS'
 export const ACTION_LOAD_ACTIVE_EXPERIMENTS = 'ACTION_LOAD_ACTIVE_EXPERIMENTS'
 export const ACTION_SET_EXPERIMENT_AUTO = 'ACTION_SET_EXPERIMENT_AUTO'
-
-const EXPERIMENTS_COOKIE_NAME = 'petri_ovr'
-const EXPERIMENTS_DOMAINS = [
-  '.wix.com',
-  '.wixapps.net',
-  '.wixsite.com',
-  '.editorx.com',
-  '.editorx.io',
-  '.wix-code.com',
-  '.wixpress.com',
-  '.wixanswers.com',
-  '.wixrestaurants.com',
-  '.wixhotels.com',
-]
 
 export const forgetExperiment: IActionCreator = async (
   context,
@@ -165,42 +151,6 @@ export const loadActiveExperiments: IActionCreator = async context => {
   completeActiveExperiments(context)
 }
 
-const getExperimentsFromCookies = (): Promise<IExperimentCookieData> =>
-  new Promise(resolve => {
-    chrome.cookies.getAll(
-      {
-        name: EXPERIMENTS_COOKIE_NAME,
-      },
-      cookies => {
-        resolve(
-          cookies
-            .filter(cookie => EXPERIMENTS_DOMAINS.includes(cookie.domain))
-            .flatMap(cookie => cookie.value.split('|'))
-            .filter(item => item.length)
-            .map(item => item.split('#'))
-            .filter(
-              (item, index, arr) =>
-                arr.findIndex(nextItem => nextItem[0] === item[0]) === index,
-            ) as IExperimentCookieData,
-        )
-      },
-    )
-  })
-
-const getFactualExperiments = async (
-  storedExperiments: IExperiment[],
-): Promise<IExperiment[]> =>
-  (await getExperimentsFromCookies()).map(([specName, state]) =>
-    getExperimentWithState(
-      {
-        specName,
-        state: EXPERIMENT_STATE.CUSTOM,
-        customState: state,
-      } as IExperiment,
-      storedExperiments,
-    ),
-  )
-
 const getUpdatedStoredExperiments = (
   storedExperiments: IExperiment[],
   factualExperiments: IExperiment[],
@@ -214,31 +164,6 @@ const getUpdatedStoredExperiments = (
           customState: undefined,
         },
   )
-
-const getExperimentWithState = (
-  newExperiment: IExperiment,
-  storedExperiments: IExperiment[],
-): IExperiment => {
-  const storedExperiment = storedExperiments.find(
-    experiment => experiment.specName === newExperiment.specName,
-  )
-  const isBinary = storedExperiment && isBinaryExperiment(storedExperiment)
-
-  if (!isBinary) {
-    return newExperiment
-  }
-
-  const customState = newExperiment.customState as string
-
-  newExperiment.state =
-    customState.toLowerCase() === 'true'
-      ? EXPERIMENT_STATE.ON
-      : EXPERIMENT_STATE.OFF
-
-  delete newExperiment.customState
-
-  return newExperiment
-}
 
 const reloadRelevantTabs = () => {
   const urlPatterns = EXPERIMENTS_DOMAINS.map(domain => `*://*${domain}/*`)

@@ -4,7 +4,7 @@ import {
   ACTION_COMPLETE_ACTIVE_EXPERIMENTS,
 } from './activeExperimentsActions'
 import {IExperiment, EXPERIMENT_STATE} from '../../commons/petri'
-import {isBinaryExperiment} from '../../commons/experiment'
+import {isBinaryExperiment} from '../../commons/experiments'
 
 export interface IActiveExperimentsState {
   list: IExperiment[]

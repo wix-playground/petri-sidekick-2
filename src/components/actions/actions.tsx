@@ -5,7 +5,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 import {Delete} from '../delete/delete'
 import s from './actions.module.css'
-import {isBinaryExperiment} from '../../commons/experiment'
+import {isBinaryExperiment} from '../../commons/experiments'
 import {useCards} from '../../hooks/cards/useCards'
 
 export interface IListActionsProps {

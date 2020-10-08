@@ -75,5 +75,3 @@ export const reloadPetriExperiments: IActionCreator = context => {
 
 const getCachedExperiments = async () =>
   getValue(EXPERIMENTS_MEMORY) || (await getRuntimeValue(EXPERIMENTS_MEMORY))
-
-// TODO: Implement button to manually fetch experiments to get new ones

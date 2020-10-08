@@ -116,6 +116,10 @@ export const Search = () => {
     return <Loader text={'Loading experiments...'} />
   }
 
+  if (activeTab !== TAB.SEARCH) {
+    return null
+  }
+
   const keyDownHandler = (e: Event) => {
     // FIXME: clicking enter on partial result like "spec" causes blur
     if ((e as KeyboardEvent).key === 'Enter' && element.current) {

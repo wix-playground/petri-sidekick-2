@@ -26,6 +26,7 @@ export const Layout = () => {
 
     if (enabledCachedTyping) {
       if (e.key.match(/^[a-zA-Z0-9_-]$/)) {
+        e.preventDefault()
         addCachedTypingText(e.key)
         if (activeTab !== TAB.SEARCH) {
           setActiveTab(TAB.SEARCH)

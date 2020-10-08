@@ -97,7 +97,3 @@ export type IExperimentCookieDataItem = [string, string]
 export type IExperimentCookieData = IExperimentCookieDataItem[]
 
 export type IExperimentMap = {[spec: string]: IExperiment}
-
-export const EXPERIMENT_STATE_ON = 'ON'
-export const EXPERIMENT_STATE_OFF = 'OFF'
-export const EXPERIMENT_STATE_AUTO = 'AUTO'

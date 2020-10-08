@@ -12,32 +12,6 @@ export interface IListActionsProps {
   experiment: IExperiment
 }
 
-const getDropdownVariant = (experiment: IExperiment) => {
-  switch (experiment.state) {
-    case EXPERIMENT_STATE.ON:
-      return 'success'
-    case EXPERIMENT_STATE.OFF:
-      return 'danger'
-    case EXPERIMENT_STATE.CUSTOM:
-      return 'warning'
-    default:
-      return 'primary'
-  }
-}
-
-const getDropdownValue = (experiment: IExperiment) => {
-  switch (experiment.state) {
-    case EXPERIMENT_STATE.ON:
-      return 'On'
-    case EXPERIMENT_STATE.OFF:
-      return 'Off'
-    case EXPERIMENT_STATE.CUSTOM:
-      return experiment.customState as string
-    default:
-      return 'Auto'
-  }
-}
-
 export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
   const {
     setExperimentAuto,
@@ -104,4 +78,30 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
       <Delete specName={experiment.specName} />
     </div>
   )
+}
+
+const getDropdownVariant = (experiment: IExperiment) => {
+  switch (experiment.state) {
+    case EXPERIMENT_STATE.ON:
+      return 'success'
+    case EXPERIMENT_STATE.OFF:
+      return 'danger'
+    case EXPERIMENT_STATE.CUSTOM:
+      return 'warning'
+    default:
+      return 'primary'
+  }
+}
+
+const getDropdownValue = (experiment: IExperiment) => {
+  switch (experiment.state) {
+    case EXPERIMENT_STATE.ON:
+      return 'On'
+    case EXPERIMENT_STATE.OFF:
+      return 'Off'
+    case EXPERIMENT_STATE.CUSTOM:
+      return experiment.customState as string
+    default:
+      return 'Auto'
+  }
 }

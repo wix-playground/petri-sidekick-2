@@ -12,12 +12,12 @@ export interface IExperimentInfoProps {
 export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
   experiment,
 }) => {
-  const petriData = experiment.petriData
+  const {petriData, specName, state, customState} = experiment
 
   return (
     <Card border="light">
       <Card.Body>
-        <Card.Title>{experiment.specName}</Card.Title>
+        <Card.Title>{specName}</Card.Title>
         {petriData && (
           <Card.Subtitle className={'mb-2 text-muted'}>
             {petriData.scopes.join(', ')}
@@ -43,7 +43,7 @@ export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
           <Badges experiment={experiment} />
           <Override
             experiment={experiment}
-            key={`${experiment.specName}-${experiment.state}-${experiment.customState}-${experiment.petriData}`}
+            key={`${specName}-${state}-${customState}-${petriData}`}
           />
         </Card.Text>
       </Card.Body>

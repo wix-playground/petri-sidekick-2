@@ -21,20 +21,22 @@ export const ExperimentCard: React.FC<any> = ({experiment}) => {
   const {loaded} = usePetriExperiments()
   const {toggleCard} = useCards()
 
+  const {specName, petriData} = experiment
+
   return (
     <Card className={s.item}>
       <Accordion.Toggle
         as={Card.Header}
-        eventKey={experiment.specName}
+        eventKey={specName}
         onClick={() => {
-          toggleCard(experiment.specName)
+          toggleCard(specName)
         }}
       >
-        <div className={s.specName}>{experiment.specName}</div>
+        <div className={s.specName}>{specName}</div>
       </Accordion.Toggle>
-      <Accordion.Collapse eventKey={experiment.specName}>
+      <Accordion.Collapse eventKey={specName}>
         <Card.Body className={s.experimentCard}>
-          {experiment.petriData ? (
+          {petriData ? (
             <ExperimentInfo experiment={experiment} />
           ) : !ready ? (
             <div className={s.loading}>

@@ -18,31 +18,15 @@ export interface IOverrideProps {
 
 export const Override: React.FC<IOverrideProps> = ({experiment}) => {
   const element = React.useRef<any>()
+
   const {activeCard} = useCards()
   const {activeTab} = useTabs()
   const {focus, disableOverrideInputFocus} = useOverrideInput()
+  const [invalid, setInvalid] = React.useState<boolean>(false)
+  const {setExperimentValue, setExperimentAuto} = useActiveExperiments()
 
-  const search = activeTab === TAB.SEARCH
-
-  React.useEffect(() => {
-    if (focus && element?.current) {
-      disableOverrideInputFocus()
-      setTimeout(() => {
-        element.current?.focus()
-      }, FOCUS_DELAY)
-    }
-  }, [focus, disableOverrideInputFocus])
-
+  const isSearchTab = activeTab === TAB.SEARCH
   const binary = isBinaryExperiment(experiment)
-
-  const stateMap = {
-    [EXPERIMENT_STATE.ON]: 'true',
-    [EXPERIMENT_STATE.OFF]: 'false',
-    [EXPERIMENT_STATE.AUTO]: '',
-    [EXPERIMENT_STATE.CUSTOM]: experiment?.customState ?? '',
-  }
-
-  const realState = stateMap[experiment.state ?? EXPERIMENT_STATE.AUTO]
 
   const mapToLabel = (value: string) => {
     if (!value) {
@@ -72,14 +56,33 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
     }
   }
 
+  const id = `${isSearchTab ? 'search' : 'bookmark'}-input-${
+    experiment.specName
+  }`
+
+  const options = mapToLabels(experiment.petriData?.options ?? [])
+
+  const stateMap = {
+    [EXPERIMENT_STATE.ON]: 'true',
+    [EXPERIMENT_STATE.OFF]: 'false',
+    [EXPERIMENT_STATE.AUTO]: '',
+    [EXPERIMENT_STATE.CUSTOM]: experiment?.customState ?? '',
+  }
+
+  const realState = stateMap[experiment.state ?? EXPERIMENT_STATE.AUTO]
+
   const [inputValue, setInputValue] = React.useState<string>(
     mapToLabel(realState),
   )
 
-  const [invalid, setInvalid] = React.useState<boolean>(false)
-  const {setExperimentValue, setExperimentAuto} = useActiveExperiments()
-
-  const options = mapToLabels(experiment.petriData?.options ?? [])
+  React.useEffect(() => {
+    if (focus && element?.current) {
+      disableOverrideInputFocus()
+      setTimeout(() => {
+        element.current?.focus()
+      }, FOCUS_DELAY)
+    }
+  }, [focus, disableOverrideInputFocus])
 
   const handleSubmit = (value: string = inputValue) => {
     const valid = !value || options.includes(value)
@@ -107,11 +110,9 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
     setInvalid(false)
   }
 
-  if (activeCard !== experiment.specName && !search) {
+  if (activeCard !== experiment.specName && !isSearchTab) {
     return null
   }
-
-  const id = `${search ? 'search' : 'bookmark'}-input-${experiment.specName}`
 
   const keyDownHandler = (e: Event) => {
     if ((e as KeyboardEvent).key === 'Enter' && element.current) {

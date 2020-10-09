@@ -43,38 +43,46 @@ export const ListActions: React.FC<IListActionsProps> = ({experiment}) => {
           variant={getDropdownVariant(experiment)}
         >
           {experiment.state !== EXPERIMENT_STATE.AUTO && (
-            <Dropdown.Item
-              eventKey="reset"
-              onClick={() => setExperimentAuto(experiment.specName)}
-            >
-              Reset
-            </Dropdown.Item>
+            <div data-testid={TEST_ID.LIST_ITEM_SWITCH_RESET}>
+              <Dropdown.Item
+                eventKey="reset"
+                onClick={() => setExperimentAuto(experiment.specName)}
+              >
+                Reset
+              </Dropdown.Item>
+            </div>
           )}
           {!isBinary && (
-            <Dropdown.Item
-              eventKey="auto"
-              onClick={() => {
-                openCard(experiment.specName, true)
-              }}
-            >
-              Change
-            </Dropdown.Item>
+            <div data-testid={TEST_ID.LIST_ITEM_SWITCH_CHANGE}>
+              <Dropdown.Item
+                eventKey="auto"
+                onClick={() => {
+                  openCard(experiment.specName, true)
+                }}
+              >
+                Change
+              </Dropdown.Item>
+            </div>
           )}
           {experiment.state !== EXPERIMENT_STATE.ON && isBinary && (
-            <Dropdown.Item
-              eventKey="on"
-              onClick={() => turnBinaryExperimentOn(experiment.specName)}
-            >
-              Enable
-            </Dropdown.Item>
+            <div data-testid={TEST_ID.LIST_ITEM_SWITCH_ENABLE}>
+              <Dropdown.Item
+                eventKey="on"
+                onClick={() => turnBinaryExperimentOn(experiment.specName)}
+              >
+                Enable
+              </Dropdown.Item>
+            </div>
           )}
           {experiment.state !== EXPERIMENT_STATE.OFF && isBinary && (
-            <Dropdown.Item
-              eventKey="off"
-              onClick={() => turnBinaryExperimentOff(experiment.specName)}
-            >
-              Disable
-            </Dropdown.Item>
+            <div data-testid={TEST_ID.LIST_ITEM_SWITCH_DISABLE}>
+              <Dropdown.Item
+                eventKey="off"
+                onClick={() => turnBinaryExperimentOff(experiment.specName)}
+              >
+                Disable
+              </Dropdown.Item>
+            </div>
           )}
         </DropdownButton>
       </div>

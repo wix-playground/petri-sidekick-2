@@ -23,29 +23,27 @@ export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
             {petriData.scopes.join(', ')}
           </Card.Subtitle>
         )}
-        <Card.Text>
-          {petriData && (
-            <p className={s.pointsOfContact}>
-              {petriData.pointsOfContact.map((item, index) => (
-                <>
-                  {Boolean(index) && ', '}
-                  <a
-                    href={`mailto:${item}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {item}
-                  </a>
-                </>
-              ))}
-            </p>
-          )}
-          <Badges experiment={experiment} />
-          <Override
-            experiment={experiment}
-            key={`${specName}-${state}-${customState}-${petriData}`}
-          />
-        </Card.Text>
+        {petriData && (
+          <p className={s.pointsOfContact}>
+            {petriData.pointsOfContact.map((item, index) => (
+              <span key={index}>
+                {Boolean(index) && ', '}
+                <a
+                  href={`mailto:${item}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item}
+                </a>
+              </span>
+            ))}
+          </p>
+        )}
+        <Badges experiment={experiment} />
+        <Override
+          experiment={experiment}
+          key={`${specName}-${state}-${customState}-${petriData}`}
+        />
       </Card.Body>
     </Card>
   )

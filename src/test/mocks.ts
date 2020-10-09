@@ -52,12 +52,13 @@ export const getChromeMock = ({
 
         if (responseMap[message.payload.url]) {
           cb({payload: responseMap[message.payload.url]})
+          return
         }
       } else if (message.type === 'GET_STORAGE') {
         switch (message.payload.key) {
           case 'experiments': {
             cb({payload: null})
-            break
+            return
           }
         }
       }

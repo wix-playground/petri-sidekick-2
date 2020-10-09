@@ -8,6 +8,7 @@ import s from './layout.module.css'
 import {Search} from '../search/search'
 import {useActiveExperiments} from '../../hooks/activeExperiments/useActiveExperiments'
 import {useCachedTyping} from '../../hooks/cachedTyping/useCachedTyping'
+import {TEST_ID} from '../../commons/test-ids'
 
 export const Layout = () => {
   const {activeTab, setActiveTab} = useTabs()
@@ -64,7 +65,10 @@ export const Layout = () => {
             }
           />
         </Tab>
-        <Tab eventKey={TAB.SEARCH} title="Search">
+        <Tab
+          eventKey={TAB.SEARCH}
+          title={<div data-testid={TEST_ID.TAB_SEARCH}>Search</div>}
+        >
           <Search />
         </Tab>
       </Tabs>

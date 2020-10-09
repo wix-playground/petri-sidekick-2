@@ -52,12 +52,12 @@ describe('Petri Sidekick (sanity tests)', () => {
   })
 
   it('allows changing experiment override value', async () => {
-    const TEST_INDEX = 0
+    const TEST_ID = 0
 
     const ui = await render()
-    await ui.clickSwitch(TEST_INDEX, SWITCH.DISABLE)
+    await ui.clickSwitch(TEST_ID, SWITCH.DISABLE)
 
-    const specName = await ui.getListItemTitle(TEST_INDEX)
+    const specName = await ui.getListItemTitle(TEST_ID)
     const experiments = ui.getExperimentConfig()
     experiments[specName as string] = 'false'
 
@@ -75,12 +75,12 @@ describe('Petri Sidekick (sanity tests)', () => {
   })
 
   it('allows disabling experiment override', async () => {
-    const TEST_INDEX = 0
+    const TEST_ID = 0
 
     const ui = await render()
-    await ui.clickSwitch(TEST_INDEX, SWITCH.RESET)
+    await ui.clickSwitch(TEST_ID, SWITCH.RESET)
 
-    const specName = await ui.getListItemTitle(TEST_INDEX)
+    const specName = await ui.getListItemTitle(TEST_ID)
     const experiments = ui.getExperimentConfig()
     delete experiments[specName as string]
 
@@ -112,13 +112,13 @@ describe('Petri Sidekick (sanity tests)', () => {
   })
 
   it('allows changing experiment value using input', async () => {
-    const TEST_INDEX = 2
+    const TEST_ID = 2
 
     const ui = await render()
-    await ui.expandListItem(TEST_INDEX)
+    await ui.expandListItem(TEST_ID)
     await ui.enterOverrideValue('old')
 
-    const specName = await ui.getListItemTitle(TEST_INDEX)
+    const specName = await ui.getListItemTitle(TEST_ID)
     const experiments = ui.getExperimentConfig()
     experiments[specName as string] = 'old'
 
@@ -134,13 +134,13 @@ describe('Petri Sidekick (sanity tests)', () => {
   })
 
   it('allows resetting experiment value using input reset button', async () => {
-    const TEST_INDEX = 2
+    const TEST_ID = 2
 
     const ui = await render()
-    await ui.expandListItem(TEST_INDEX)
+    await ui.expandListItem(TEST_ID)
     await ui.enterOverrideValue('')
 
-    const specName = await ui.getListItemTitle(TEST_INDEX)
+    const specName = await ui.getListItemTitle(TEST_ID)
     const experiments = ui.getExperimentConfig()
     delete experiments[specName as string]
 
@@ -172,25 +172,67 @@ describe('Petri Sidekick (sanity tests)', () => {
     )
   })
 
-  it.skip('shows full experiment spec name when expanded', () => {
-    // TODO: Not finished
+  it('shows full experiment spec name when expanded', async () => {
+    const TEST_ID = 1
+    const ui = await render()
+    const specName = await ui.getListItemTitle(TEST_ID)
+    await ui.expandListItem(TEST_ID)
+    expect(await ui.getFullTitle(TEST_ID)).toBe(specName)
   })
 
-  it.skip('allows removing experiment from bookmark list', () => {
-    // TODO: Not finished
-    // TODO: make sure that experiment is also set to auto
+  it('allows removing experiment from bookmark list', async () => {
+    const TEST_ID = 1
+    const ui = await render()
+
+    const specName = await ui.getListItemTitle(TEST_ID)
+    const experiments = ui.getExperimentConfig()
+    delete experiments[specName as string]
+
+    await ui.clickDelete(TEST_ID)
+
+    expect(chrome.cookies.set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: EXPERIMENTS_COOKIE_NAME,
+        value: ui.getExperimentCookieValue(experiments),
+      }),
+      expect.any(Function),
+    )
+
+    // FIXME: for some reason sendMessage is called but mock does not see it
+    // expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
+    //   type: 'SET_STORAGE',
+    //   payload: {
+    //     key: 'experiments',
+    //     value: expect.not.stringContaining(specName as string),
+    //   },
+    // })
   })
 
-  it.skip('allows finding experiment using search', () => {
-    // TODO: Not finished
+  it('allows finding experiment using search', async () => {
+    const ui = await render()
+    await ui.openSearch()
+    expect(await ui.isSearchResultVisible()).toBeFalsy()
+    await ui.enterSearchQuery('booleanExperiment')
+    expect(await ui.isSearchResultVisible()).toBeTruthy()
   })
 
-  it.skip('allows overriding experiment using search', () => {
-    // TODO: Not finished
-    // TODO: also make sure it is added to bookmarks
-  })
+  it('allows updating experiment cache if experiment is not found', async () => {
+    const ui = await render()
 
-  it.skip('allows updating experiment cache if experiment is not found', () => {
-    // TODO: Not finished
+    await ui.openSearch()
+    await ui.enterSearchQuery('nonExistent')
+
+    jest.clearAllMocks()
+    await ui.clickUpdate()
+
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
+      {
+        type: 'GET',
+        payload: expect.objectContaining({
+          url: expect.stringContaining('ExperimentSearch'),
+        }),
+      },
+      expect.any(Function),
+    )
   })
 })

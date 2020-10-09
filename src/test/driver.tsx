@@ -110,6 +110,12 @@ export const render = async ({cookieConfig}: IRenderOptions = {}) => {
       fireEvent.click(optionWrapper.querySelector('a') as Element)
       await wait()
     },
+    async clickDelete(index: number) {
+      const listItem = (await screen.findAllByTestId(TEST_ID.LIST_ITEM))[index]
+      const deleteWrapper = await findByTestId(listItem, TEST_ID.DELETE)
+      fireEvent.click(deleteWrapper.querySelector('button') as Element)
+      await wait()
+    },
     async getOverrideInputValue() {
       const inputWrapper = await screen.findByTestId(TEST_ID.OVERRIDE_INPUT)
       const input = inputWrapper.querySelector('input')
@@ -129,6 +135,40 @@ export const render = async ({cookieConfig}: IRenderOptions = {}) => {
     async getAuthors(index: number) {
       const listItem = (await screen.findAllByTestId(TEST_ID.LIST_ITEM))[index]
       return (await findByTestId(listItem, TEST_ID.AUTHORS)).textContent
+    },
+    async getFullTitle(index: number) {
+      const listItem = (await screen.findAllByTestId(TEST_ID.LIST_ITEM))[index]
+      return (await findByTestId(listItem, TEST_ID.FULL_TITLE)).textContent
+    },
+    async openSearch() {
+      const tab = await screen.findByTestId(TEST_ID.TAB_SEARCH)
+      fireEvent.click(tab)
+      await wait(1000)
+    },
+    async enterSearchQuery(value: string) {
+      const inputWrapper = await screen.findByTestId(TEST_ID.SEARCH_INPUT)
+      const input = inputWrapper.querySelector('input') as any
+      fireEvent.change(input, {target: {value}})
+      fireEvent.blur(input)
+      await wait()
+    },
+    async isSearchResultVisible() {
+      let searchResult
+
+      try {
+        searchResult = await screen.findByTestId(TEST_ID.SEARCH_RESULT)
+      } catch (e) {
+        return false
+      }
+      const fullTitle = searchResult.querySelector(
+        `[data-testid="${TEST_ID.FULL_TITLE}"]`,
+      )
+      return Boolean(fullTitle)
+    },
+    async clickUpdate() {
+      const noInfoWrapper = await screen.findByTestId(TEST_ID.NO_INFO)
+      fireEvent.click(noInfoWrapper.querySelector('button') as any)
+      await wait()
     },
   }
 }

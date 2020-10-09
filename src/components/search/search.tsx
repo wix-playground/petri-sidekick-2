@@ -15,6 +15,7 @@ import {useOverrideInput} from '../../hooks/overrideInput/useOverrideInput'
 import {FOCUS_DELAY} from '../../commons/constants'
 import {NoInfo} from '../no-info/no-info'
 import {useCachedTyping} from '../../hooks/cachedTyping/useCachedTyping'
+import {TEST_ID} from '../../commons/test-ids'
 
 export const Search = () => {
   const element = React.useRef<any>()
@@ -130,15 +131,16 @@ export const Search = () => {
 
   return (
     <>
-      <div className={s.input}>
+      <div className={s.input} data-testid={TEST_ID.SEARCH_INPUT}>
         <Typeahead
+          id="search"
           onKeyDown={keyDownHandler}
           ref={element}
           placeholder="Type experiment spec name here"
           options={getSearchQueries()}
           ignoreDiacritics={false}
           highlightOnlyResult
-          onMenuHide={showResult}
+          onMenuToggle={show => !show && showResult()}
           onBlur={() => showResult()}
           onChange={([query]) => {
             query && showResult(query)
@@ -154,7 +156,7 @@ export const Search = () => {
         />
       )}
       {experiment && (
-        <div className={s.result}>
+        <div className={s.result} data-testid={TEST_ID.SEARCH_RESULT}>
           <ExperimentInfo experiment={experiment} />
         </div>
       )}

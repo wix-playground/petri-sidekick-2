@@ -19,7 +19,9 @@ export const ExperimentInfo: React.FC<IExperimentInfoProps> = ({
     <div data-testid={TEST_ID.EXPERIMENT_INFO}>
       <Card border="light">
         <Card.Body>
-          <Card.Title>{specName}</Card.Title>
+          <Card.Title>
+            <span data-testid={TEST_ID.FULL_TITLE}>{specName}</span>
+          </Card.Title>
           {petriData && (
             <Card.Subtitle className={'mb-2 text-muted'}>
               {petriData.scopes.join(', ')}

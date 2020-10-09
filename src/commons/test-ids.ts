@@ -7,4 +7,12 @@ export const TEST_ID = {
   LIST_ITEM_SWITCH_ENABLE: 'list-item-switch-enable',
   LIST_ITEM_SWITCH_DISABLE: 'list-item-switch-disable',
   DELETE: 'delete',
+  EXPERIMENT_INFO: 'experiment-info',
+  OVERRIDE_INPUT: 'override-input',
+  BADGE_ACTIVE: 'badge-active',
+  BADGE_ENDED: 'badge-ended',
+  BADGE_FUTURE: 'badge-future',
+  BADGE_PAUSED: 'badge-paused',
+  BADGE_OVERRIDDEN: 'badge-overridden',
+  AUTHORS: 'authors',
 }

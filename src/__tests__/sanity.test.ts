@@ -1,5 +1,5 @@
 import {cleanup} from '@testing-library/react'
-import {render, SWITCH} from '../test/driver'
+import {render, SWITCH, BADGE} from '../test/driver'
 import {
   EXPERIMENTS_COOKIE_NAME,
   EXPERIMENTS_DOMAINS,
@@ -105,32 +105,71 @@ describe('Petri Sidekick (sanity tests)', () => {
     expect(await ui.isListItemExpanded(TEST_ID)).toBeTruthy()
   })
 
-  it.skip('shows correct experiment value in input', () => {
-    // TODO: Not finished
+  it('shows correct experiment value in input', async () => {
+    const ui = await render()
+    await ui.expandListItem(2)
+    expect(await ui.getOverrideInputValue()).toBe('new')
   })
 
-  it.skip('allows changing experiment value using input', () => {
-    // TODO: Not finished
+  it('allows changing experiment value using input', async () => {
+    const TEST_INDEX = 2
+
+    const ui = await render()
+    await ui.expandListItem(TEST_INDEX)
+    await ui.enterOverrideValue('old')
+
+    const specName = await ui.getListItemTitle(TEST_INDEX)
+    const experiments = ui.getExperimentConfig()
+    experiments[specName as string] = 'old'
+
+    expect(chrome.cookies.set).toHaveBeenCalledTimes(EXPERIMENTS_DOMAINS.length)
+
+    expect(chrome.cookies.set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: EXPERIMENTS_COOKIE_NAME,
+        value: ui.getExperimentCookieValue(experiments),
+      }),
+      expect.any(Function),
+    )
   })
 
-  it.skip('allows resetting experiment value using input reset button', () => {
-    // TODO: Not finished
+  it('allows resetting experiment value using input reset button', async () => {
+    const TEST_INDEX = 2
+
+    const ui = await render()
+    await ui.expandListItem(TEST_INDEX)
+    await ui.enterOverrideValue('')
+
+    const specName = await ui.getListItemTitle(TEST_INDEX)
+    const experiments = ui.getExperimentConfig()
+    delete experiments[specName as string]
+
+    expect(chrome.cookies.set).toHaveBeenCalledTimes(EXPERIMENTS_DOMAINS.length)
+
+    expect(chrome.cookies.set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: EXPERIMENTS_COOKIE_NAME,
+        value: ui.getExperimentCookieValue(experiments),
+      }),
+      expect.any(Function),
+    )
   })
 
-  it.skip('shows experiment status badge', () => {
-    // TODO: Not finished
+  it('renders badges', async () => {
+    const TEST_ID = 1
+    const ui = await render()
+    await ui.expandListItem(TEST_ID)
+    expect(await ui.isBadgeVisible(TEST_ID, BADGE.ACTIVE)).toBeTruthy()
+    expect(await ui.isBadgeVisible(TEST_ID, BADGE.OVERRIDDEN)).toBeTruthy()
   })
 
-  it.skip('does not show experiment override badge when set to auto', () => {
-    // TODO: Not finished
-  })
-
-  it.skip('shows experiment override badge when overridden', () => {
-    // TODO: Not finished
-  })
-
-  it.skip('shows experiment authors', () => {
-    // TODO: Not finished
+  it('shows experiment authors', async () => {
+    const TEST_ID = 1
+    const ui = await render()
+    await ui.expandListItem(TEST_ID)
+    expect(await ui.getAuthors(TEST_ID)).toBe(
+      'creator@wix.com, updater@wix.com',
+    )
   })
 
   it.skip('shows full experiment spec name when expanded', () => {

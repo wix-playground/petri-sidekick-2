@@ -21,6 +21,14 @@ export const SWITCH = {
   DISABLE: TEST_ID.LIST_ITEM_SWITCH_DISABLE,
 }
 
+export const BADGE = {
+  ACTIVE: TEST_ID.BADGE_ACTIVE,
+  ENDED: TEST_ID.BADGE_ENDED,
+  FUTURE: TEST_ID.BADGE_FUTURE,
+  PAUSED: TEST_ID.BADGE_PAUSED,
+  OVERRIDDEN: TEST_ID.BADGE_OVERRIDDEN,
+}
+
 export const render = async ({cookieConfig}: IRenderOptions = {}) => {
   const g = global as any
   g.chrome = getChromeMock({cookieConfig})
@@ -101,6 +109,26 @@ export const render = async ({cookieConfig}: IRenderOptions = {}) => {
       const optionWrapper = await findByTestId(switchWrapper, option)
       fireEvent.click(optionWrapper.querySelector('a') as Element)
       await wait()
+    },
+    async getOverrideInputValue() {
+      const inputWrapper = await screen.findByTestId(TEST_ID.OVERRIDE_INPUT)
+      const input = inputWrapper.querySelector('input')
+      return input?.value
+    },
+    async enterOverrideValue(value: string) {
+      const inputWrapper = await screen.findByTestId(TEST_ID.OVERRIDE_INPUT)
+      const input = inputWrapper.querySelector('input') as any
+      fireEvent.change(input, {target: {value}})
+      fireEvent.blur(input)
+      await wait()
+    },
+    async isBadgeVisible(index: number, badge: string) {
+      const listItem = (await screen.findAllByTestId(TEST_ID.LIST_ITEM))[index]
+      return Boolean(await findByTestId(listItem, badge))
+    },
+    async getAuthors(index: number) {
+      const listItem = (await screen.findAllByTestId(TEST_ID.LIST_ITEM))[index]
+      return (await findByTestId(listItem, TEST_ID.AUTHORS)).textContent
     },
   }
 }

@@ -10,6 +10,7 @@ import {useTabs} from '../../hooks/tabs/useTabs'
 import {TAB} from '../../hooks/tabs/tabsReducer'
 import {useOverrideInput} from '../../hooks/overrideInput/useOverrideInput'
 import {FOCUS_DELAY} from '../../commons/constants'
+import {TEST_ID} from '../../commons/test-ids'
 
 export interface IOverrideProps {
   experiment: IExperiment
@@ -126,7 +127,7 @@ export const Override: React.FC<IOverrideProps> = ({experiment}) => {
     <>
       <h5>Override:</h5>
       <div className={s.searchLine}>
-        <div className={s.search}>
+        <div className={s.search} data-testid={TEST_ID.OVERRIDE_INPUT}>
           <Typeahead
             onKeyDown={keyDownHandler}
             ref={element}

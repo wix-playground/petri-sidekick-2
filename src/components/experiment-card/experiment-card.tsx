@@ -26,44 +26,46 @@ export const ExperimentCard: React.FC<any> = ({experiment}) => {
 
   return (
     <Card className={s.item}>
-      <Accordion.Toggle
-        as={Card.Header}
-        eventKey={specName}
-        onClick={() => {
-          toggleCard(specName)
-        }}
-      >
-        <div className={s.specName} data-testid={TEST_ID.LIST_ITEM_TITLE}>
-          {specName}
-        </div>
-      </Accordion.Toggle>
-      <Accordion.Collapse eventKey={specName}>
-        <Card.Body className={s.experimentCard}>
-          {petriData ? (
-            <ExperimentInfo experiment={experiment} />
-          ) : !ready ? (
-            <div className={s.loading}>
-              <Loader text={'Connecting...'} />
-            </div>
-          ) : authenticated ? (
-            !loaded ? (
+      <div data-testid={TEST_ID.LIST_ITEM}>
+        <Accordion.Toggle
+          as={Card.Header}
+          eventKey={specName}
+          onClick={() => {
+            toggleCard(specName)
+          }}
+        >
+          <div className={s.specName} data-testid={TEST_ID.LIST_ITEM_TITLE}>
+            {specName}
+          </div>
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey={specName}>
+          <Card.Body className={s.experimentCard}>
+            {petriData ? (
+              <ExperimentInfo experiment={experiment} />
+            ) : !ready ? (
               <div className={s.loading}>
-                <Loader text={'Loading experiments...'} />
+                <Loader text={'Connecting...'} />
               </div>
+            ) : authenticated ? (
+              !loaded ? (
+                <div className={s.loading}>
+                  <Loader text={'Loading experiments...'} />
+                </div>
+              ) : (
+                <NoInfo
+                  message="More detailed information is not loaded"
+                  buttonName="Update"
+                />
+              )
             ) : (
-              <NoInfo
-                message="More detailed information is not loaded"
-                buttonName="Update"
-              />
-            )
-          ) : (
-            <div className={s.login}>
-              <Login />
-            </div>
-          )}
-        </Card.Body>
-      </Accordion.Collapse>
-      {experiment.state && <ListActions experiment={experiment} />}
+              <div className={s.login}>
+                <Login />
+              </div>
+            )}
+          </Card.Body>
+        </Accordion.Collapse>
+        {experiment.state && <ListActions experiment={experiment} />}
+      </div>
     </Card>
   )
 }

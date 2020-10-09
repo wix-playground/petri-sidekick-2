@@ -52,7 +52,7 @@ export const Layout = () => {
       <Tabs
         id="tabs"
         activeKey={activeTab}
-        onSelect={(k: string) => setActiveTab(k as TAB)}
+        onSelect={(k: string | null) => setActiveTab(k as TAB)}
       >
         <Tab eventKey={TAB.CURRENT} title="Current">
           <List

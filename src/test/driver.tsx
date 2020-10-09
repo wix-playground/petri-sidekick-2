@@ -143,7 +143,7 @@ export const render = async ({cookieConfig}: IRenderOptions = {}) => {
     async openSearch() {
       const tab = await screen.findByTestId(TEST_ID.TAB_SEARCH)
       fireEvent.click(tab)
-      await wait(1000)
+      await wait()
     },
     async enterSearchQuery(value: string) {
       const inputWrapper = await screen.findByTestId(TEST_ID.SEARCH_INPUT)

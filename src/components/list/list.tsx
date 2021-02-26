@@ -5,7 +5,6 @@ import s from './list.module.css'
 import {IExperiment} from '../../commons/petri'
 import {ExperimentCard} from '../experiment-card/experiment-card'
 import {useCards} from '../../hooks/cards/useCards'
-import {TEST_ID} from '../../commons/test-ids'
 
 export interface IListProps {
   experiments: IExperiment[]

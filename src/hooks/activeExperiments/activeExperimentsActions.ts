@@ -138,7 +138,7 @@ export const loadActiveExperiments: IActionCreator = async context => {
   )
 
   const activeExperiments = filterUniqueByKey(
-    [...factualExperiments, ...updatedStoredExperiments],
+    [...updatedStoredExperiments, ...factualExperiments],
     'specName',
   )
 
@@ -155,15 +155,23 @@ const getUpdatedStoredExperiments = (
   storedExperiments: IExperiment[],
   factualExperiments: IExperiment[],
 ) =>
-  storedExperiments.map(experiment =>
-    factualExperiments.find(item => item.specName === experiment.state)
-      ? experiment
+  storedExperiments.map(experiment => {
+    const factualExperiment = factualExperiments.find(
+      item => item.specName === experiment.specName,
+    )
+
+    return factualExperiment
+      ? {
+          ...experiment,
+          state: factualExperiment.state,
+          customState: factualExperiment.customState,
+        }
       : {
           ...experiment,
           state: EXPERIMENT_STATE.AUTO,
           customState: undefined,
-        },
-  )
+        }
+  })
 
 const reloadRelevantTabs = () => {
   const urlPatterns = EXPERIMENTS_DOMAINS.map(domain => `*://*${domain}/*`)

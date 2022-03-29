@@ -3,7 +3,7 @@ import Spinner from 'react-bootstrap/Spinner'
 import s from './loader.module.css'
 
 export interface ILoaderProps {
-  text: string
+  text: string | JSX.Element
 }
 
 export const Loader: React.FC<ILoaderProps> = ({text}) => (

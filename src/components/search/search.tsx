@@ -20,11 +20,8 @@ import {TEST_ID} from '../../commons/test-ids'
 export const Search = () => {
   const element = React.useRef<any>()
 
-  const {
-    loaded,
-    loadPetriExperimentsIfNeeded,
-    petriExperiments,
-  } = usePetriExperiments()
+  const {loaded, loadPetriExperimentsIfNeeded, petriExperiments} =
+    usePetriExperiments()
 
   const {activeExperiments} = useActiveExperiments()
 
@@ -114,7 +111,26 @@ export const Search = () => {
   }
 
   if (!loaded) {
-    return <Loader text={'Loading experiments...'} />
+    return (
+      <Loader
+        text={
+          <>
+            <span>Collecting all experiments...</span>
+            <br />
+            <div
+              style={{
+                color: 'red',
+                fontSize: 13,
+                position: 'relative',
+                top: -10,
+              }}
+            >
+              (please keep this open and have a coffee for max 10 minutes)
+            </div>
+          </>
+        }
+      />
+    )
   }
 
   if (activeTab !== TAB.SEARCH) {

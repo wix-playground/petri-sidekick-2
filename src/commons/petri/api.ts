@@ -26,31 +26,89 @@ export const loggedIn = (): Promise<boolean> =>
   })
 
 export const getExperiments = async (): Promise<IExperiment[]> => {
-  const GET_EXPERIMENTS_LIMIT = 1000
-  const GET_EXPERIMENTS_TIMEOUT = 100
+  const GET_EXPERIMENTS_LIMIT = 4000
+  const GET_EXPERIMENTS_TIMEOUT = 0
+  const GET_EXPERIMENTS_SLOW_FAIL_TIMEOUT = 1000
+  const GET_EXPERIMENTS_FAIL_TIMEOUT = 1000
+  const SINGLE_EXPERIMENT_RETRIES = 2
+  const SINGLE_EXPERIMENT_SKIP_RETRIES = 100
+  const RETRY_DIVIDER = 4
+  const RETRIES_BEFORE_INCREASE = RETRY_DIVIDER - 1
 
   let offset = 0
-  let lastAmount = 0
-  let newAmount = 0
   let map: IExperimentMap = {}
 
-  do {
-    lastAmount = newAmount
-    try {
-      const data = await get(
-        `/v1/ExperimentSearch?query=&limit=${GET_EXPERIMENTS_LIMIT}&offset=${offset}`,
-      )
-      offset += GET_EXPERIMENTS_LIMIT
-      map = mapExperiments(map, data as IPetriExperimentData[])
-      newAmount = Object.keys(map).length
-    } catch (e) {
-      return []
-    }
+  let currentLimit = GET_EXPERIMENTS_LIMIT
+  let retries = SINGLE_EXPERIMENT_RETRIES
+  let skipRetries = SINGLE_EXPERIMENT_SKIP_RETRIES
+  let failed = false
+  let gotNewData = false
+  let retriesBeforeIncrease = RETRIES_BEFORE_INCREASE
 
-    if (newAmount > lastAmount) {
+  do {
+    failed = false
+    gotNewData = false
+
+    try {
+      const data = (await get(
+        `/v1/ExperimentSearch?limit=${currentLimit}&offset=${offset}`,
+      )) as IPetriExperimentData[]
+
+      if (data.length) {
+        gotNewData = true
+      }
+
+      offset += currentLimit
+
+      if (!retriesBeforeIncrease) {
+        currentLimit = Math.min(
+          GET_EXPERIMENTS_LIMIT,
+          currentLimit * RETRY_DIVIDER,
+        )
+      }
+
+      retries = SINGLE_EXPERIMENT_RETRIES
+      skipRetries = SINGLE_EXPERIMENT_SKIP_RETRIES
+
+      map = mapExperiments(map, data)
+
       await new Promise(resolve => setTimeout(resolve, GET_EXPERIMENTS_TIMEOUT))
+
+      if (retriesBeforeIncrease) {
+        retriesBeforeIncrease--
+      }
+    } catch (e) {
+      failed = true
+      retriesBeforeIncrease = RETRIES_BEFORE_INCREASE
+
+      if (currentLimit > 1) {
+        currentLimit = Math.ceil(currentLimit / RETRY_DIVIDER)
+      } else {
+        if (retries) {
+          retries--
+        } else {
+          offset += currentLimit
+          skipRetries--
+          retries = SINGLE_EXPERIMENT_RETRIES
+        }
+      }
+
+      if (!(skipRetries + 1)) {
+        return []
+      }
+
+      const minimumLimit = currentLimit === 1
+
+      await new Promise(resolve =>
+        setTimeout(
+          resolve,
+          minimumLimit
+            ? GET_EXPERIMENTS_SLOW_FAIL_TIMEOUT
+            : GET_EXPERIMENTS_FAIL_TIMEOUT,
+        ),
+      )
     }
-  } while (newAmount > lastAmount)
+  } while (gotNewData || failed)
 
   return Object.values(map)
 }

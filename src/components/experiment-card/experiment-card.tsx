@@ -49,7 +49,25 @@ export const ExperimentCard: React.FC<any> = ({experiment}) => {
             ) : authenticated ? (
               !loaded ? (
                 <div className={s.loading}>
-                  <Loader text={'Loading experiments...'} />
+                  <Loader
+                    text={
+                      <>
+                        <span>Collecting all experiments...</span>
+                        <br />
+                        <div
+                          style={{
+                            color: 'red',
+                            fontSize: 13,
+                            position: 'relative',
+                            top: -10,
+                          }}
+                        >
+                          (please keep this open and have a coffee for max 10
+                          minutes)
+                        </div>
+                      </>
+                    }
+                  />
                 </div>
               ) : (
                 <NoInfo

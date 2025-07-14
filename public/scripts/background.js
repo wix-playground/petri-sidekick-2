@@ -18,17 +18,20 @@ const handleLogin = (message, sendReply) => {
         const LOGIN_BUTTON_ID = 'signinButton'
 
         if (!buttonPressed) {
-          chromeApi.tabs.executeScript(
-            tab.id,
+          chromeApi.scripting.executeScript(
             {
-              code: `document.getElementById('${LOGIN_BUTTON_ID}') !== null`,
+              target: {tabId: tab.id},
+              func: buttonId => document.getElementById(buttonId) !== null,
+              args: [LOGIN_BUTTON_ID],
             },
-            ([buttonExists]) => {
-              if (buttonExists) {
+            ([result]) => {
+              if (result?.result) {
                 buttonPressed = true
 
-                chromeApi.tabs.executeScript(tab.id, {
-                  code: `document.getElementById('${LOGIN_BUTTON_ID}')?.click()`,
+                chromeApi.scripting.executeScript({
+                  target: {tabId: tab.id},
+                  func: buttonId => document.getElementById(buttonId)?.click(),
+                  args: [LOGIN_BUTTON_ID],
                 })
               }
             },

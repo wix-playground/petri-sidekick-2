@@ -46,7 +46,8 @@ export const getChromeMock = ({
               'false',
             ]),
           ],
-          [`${API_ADDRESS}/v1/ExperimentSearch?query=&limit=1000&offset=1000`]: [],
+          [`${API_ADDRESS}/v1/ExperimentSearch?query=&limit=1000&offset=1000`]:
+            [],
           [`${API_ADDRESS}/v1/languages`]: [],
         }
 
@@ -88,6 +89,7 @@ export const getChromeMock = ({
             hostOnly: false,
             httpOnly: false,
             secure: true,
+            sameSite: 'no_restriction' as chrome.cookies.SameSiteStatus,
           }
         })
 
@@ -101,7 +103,7 @@ export const getChromeMock = ({
     }),
     reload: jest.fn(),
   },
-  browserAction: {
+  action: {
     setBadgeText: jest.fn(),
   },
 })

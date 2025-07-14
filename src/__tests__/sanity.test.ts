@@ -27,7 +27,7 @@ describe('Petri Sidekick (sanity tests)', () => {
 
   it('sets badge', async () => {
     await render()
-    expect(chrome.browserAction.setBadgeText).toHaveBeenCalledWith({text: '3'})
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({text: '3'})
   })
 
   it('displays active experiments', async () => {

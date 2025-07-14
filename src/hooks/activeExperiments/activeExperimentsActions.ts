@@ -107,7 +107,7 @@ export const setExperimentAuto: IActionCreator = async (
 }
 
 export const updateBadge: IActionCreator = ({getState}) => {
-  chrome.browserAction.setBadgeText({
+  chrome.action.setBadgeText({
     text: (getActiveExperimentAmount(getState()) || '').toString(),
   })
 }

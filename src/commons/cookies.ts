@@ -19,7 +19,9 @@ export const setCookie = (
         path: '/',
         secure,
         httpOnly: false,
-        sameSite: secure ? 'no_restriction' : 'unspecified',
+        sameSite: secure
+          ? ('no_restriction' as chrome.cookies.SameSiteStatus)
+          : ('unspecified' as chrome.cookies.SameSiteStatus),
         expirationDate: Math.floor(Date.now() / 1000) + 3600 * 24 * 7, //week
       }
 

@@ -1,5 +1,16 @@
 # Petri Sidekick 2
 
+## Quick install (pre-built)
+
+The project depends on an older Node version that may fail to build on newer machines. If you just want to use the extension, use the pre-built zip:
+
+1. Download `petri2.zip` and unzip it
+2. Open Chrome and navigate to `chrome://extensions/`
+3. Enable **Developer mode** using the toggle in the top-right corner
+4. Click **Load unpacked**
+5. Select the `petri2/build` folder from the extracted archive
+6. The extension icon should now appear in the Chrome toolbar — pin it for easy access
+
 ## Development setup
 
 CLI:
